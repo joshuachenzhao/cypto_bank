@@ -18,6 +18,11 @@ defmodule CyptoBankWeb.Router do
   scope "/api", CyptoBankWeb do
     pipe_through [:api, :api_auth]
     resources "/users", UserController, except: [:new, :edit]
+    # TODO
+    # resources "/accounts", AccountController
+    # resources "/admins", AdminController
+    # resources "/transactions", TransactionController
+    # resources "/adjustments", AdjustmentController
   end
 
   # Enables LiveDashboard only for development
