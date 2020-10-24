@@ -3,6 +3,8 @@ defmodule CyptoBank.Transactions.Ledger do
   import Ecto.Changeset
   import EctoEnum, only: [defenum: 3]
 
+  alias CyptoBank.Accounts.Account
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
 
@@ -30,9 +32,11 @@ defmodule CyptoBank.Transactions.Ledger do
     field :amount, :integer, null: false
     field :memo, :string
     field :type, LedgerType, null: false
-    field :account_id, :binary_id, null: false
+    # field :account_id, :binary_id, null: false
 
-    timestamps()
+    belongs_to(:account, Account)
+
+    timestamps(type: :utc_datetime_usec)
   end
 
   @doc false
