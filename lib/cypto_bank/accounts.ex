@@ -30,44 +30,20 @@ defmodule CyptoBank.Accounts do
   def get_account_for_user!(user_id, account_id) do
     Account
     |> query_join(:user, :id, user_id)
-    |> Repo.get!(account_id)
+    |> Repo.fetch(account_id)
   end
+
+  def get_account!(id), do: Repo.get!(Account, id)
 
   # TODO need to break the context
   # --------------------------------------------------
-
-  @doc """
-  show current user details
-  """
-  def current_user(conn) do
-    conn.assigns
-    |> Map.get(:user_sub, nil)
-    |> case do
-      nil -> nil
-      user_sub -> get_user_by_sub(user_sub)
-    end
-  end
-
-  @doc """
-  show current user id
-  """
-  def current_user_id(conn) do
-    conn
-    |> current_user
-    |> Map.get(:id)
-  end
-
-  @doc """
-  retrive user from Repo by user_sub from AWS Cognito user pool
-  """
-  def get_user_by_sub(user_sub) do
-    Repo.get_by!(User, user_sub: user_sub)
-  end
 
   def list_users do
     Repo.all(User)
   end
 
+  def fetch_user(id), do: Repo.fetch(User, id)
+  def get_user(id), do: Repo.get(User, id)
   def get_user!(id), do: Repo.get!(User, id)
 
   def create_user(attrs \\ %{}) do

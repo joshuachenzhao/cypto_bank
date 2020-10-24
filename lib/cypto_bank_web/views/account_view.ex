@@ -11,6 +11,14 @@ defmodule CyptoBankWeb.AccountView do
   end
 
   def render("account.json", %{account: account}) do
-    %{account: %{id: account.id, balance: account.balance, user_id: account.user_id}}
+    %{
+      account: %{
+        id: account.id,
+        balance: account.balance,
+        user_id: account.user_id,
+        inserted_at: account.inserted_at,
+        updated_at: account.updated_at
+      }
+    }
   end
 end
