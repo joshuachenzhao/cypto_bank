@@ -2,6 +2,8 @@ defmodule CyptoBank.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias CyptoBank.Accounts.Account
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   @required_attrs ~w(
@@ -15,6 +17,8 @@ defmodule CyptoBank.Accounts.User do
     field :is_active, :boolean, default: true
     field :password, :string, virtual: true
     field :password_hash, :string
+
+    has_many(:accounts, Account)
 
     timestamps(type: :utc_datetime_usec)
   end
