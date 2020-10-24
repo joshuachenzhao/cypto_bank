@@ -2,7 +2,6 @@ defmodule CyptoBank.Transactions do
   @moduledoc """
   The Transactions context.
   """
-
   import Ecto.Query, warn: false
   alias Ecto.Multi
 

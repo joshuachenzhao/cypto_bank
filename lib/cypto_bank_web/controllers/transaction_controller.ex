@@ -1,11 +1,10 @@
 defmodule CyptoBankWeb.TransactionController do
   use CyptoBankWeb, :controller
+  import CyptoBankWeb.Helpers, only: [fetch_current_user_id: 1]
 
   alias CyptoBank.Accounts
   alias CyptoBank.Transactions
   alias CyptoBank.Transactions.Ledger
-
-  alias CyptoBankWeb.Helpers
 
   action_fallback CyptoBankWeb.FallbackController
 
@@ -17,33 +16,18 @@ defmodule CyptoBankWeb.TransactionController do
     render(conn, "index.json", ledgers: ledgers)
   end
 
-  # TODO
-  # create transaction for an account
-  # amount, type, *memo
-  # 1. deposit and withdraw only involve self account
-  # 2. transfer involves self account and target account, use ecto Ledger
-
   @doc """
   create deposit and withdraw transaction for self account
   """
   # TODO amount should be decimal at param entry
   def deposit(conn, %{
-        "transaction" =>
-          %{"account_id" => account_id, "amount" => amount, "type" => "deposit"} =
-            transaction_params
+        "transaction" => %{"account_id" => account_id, "amount" => amount, "type" => "deposit"}
       })
       when is_integer(amount) and amount > 0 do
-    # TODO refactor this to {:ok, foo}
-    user_id = Helpers.current_user_id(conn)
-
-    # TODO this needs transactional to Accounts balance update
-    with {:ok, _account} <- Accounts.get_account_for_user!(user_id, account_id),
-         {:ok, %Ledger{} = transaction} <-
-           Transactions.create_ledger(transaction_params) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", Routes.transaction_path(conn, :show, transaction))
-      |> render("show.json", transaction: transaction)
+    with {:ok, _account} <- user_account_sercurity_check(conn, account_id),
+         {:ok, %{create_deposit_ledger_step: transaction}} <-
+           Transactions.deposite(amount, account_id) do
+      conn |> render_resp(transaction)
     end
   end
 
@@ -51,49 +35,45 @@ defmodule CyptoBankWeb.TransactionController do
   create deposit and withdraw transaction for self account
   """
   def withdrawal(conn, %{
-        "transaction" =>
-          %{"account_id" => account_id, "amount" => amount, "type" => "withdrawal"} =
-            transaction_params
+        "transaction" => %{"account_id" => account_id, "amount" => amount, "type" => "withdrawal"}
       })
       when is_integer(amount) and amount > 0 do
-    # transaction_params = transaction_params |> Map.put("type", :withdrawal)
-
-    # TODO refactor this to {:ok, foo}
-    user_id = Helpers.current_user_id(conn)
-
-    # TODO this needs transactional to Accounts balance update
-    with {:ok, _account} <- Accounts.get_account_for_user!(user_id, account_id),
-         {:ok, %Ledger{} = transaction} <-
-           Transactions.create_ledger(transaction_params) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", Routes.transaction_path(conn, :show, transaction))
-      |> render("show.json", transaction: transaction)
+    with {:ok, _account} <- user_account_sercurity_check(conn, account_id),
+         {:ok, %{create_withdrawal_ledger_step: transaction}} <-
+           Transactions.withdrawal(amount, account_id) do
+      conn |> render_resp(transaction)
     end
   end
 
-  def check_deposit_amount(amount) when is_integer(amount) and amount > 0, do: {:ok, amount}
-  def check_deposit_amount(_amount), do: {:error, "Deposit amount must a positive integer"}
-  def check_withdraw_amount(amount) when is_integer(amount) and amount > 0, do: {:ok, amount}
-  def check_deposit_amount(_amount), do: {:error, "Deposit amount must a positive integer"}
-
-  def create(conn, %{"transaction" => ledger_params}) do
-    # %{"account_id" => account_id, "amount" => amount, "memo" => memo} = transaction_params
-    #
-    # user_id = Helpers.current_user_id(conn)
-    #
-    # Accounts.get_account_for_user!(user_id, account_id)
-
-    with {:ok, %Ledger{} = transaction} <-
-           Transactions.create_ledger(ledger_params) do
+  @doc """
+  create deposit and withdraw transaction for self account
+  """
+  def transfer(conn, %{
+        "transaction" => %{
+          "account_id" => account_id,
+          "amount" => amount,
+          "type" => "transfer_pay",
+          "receive_account_id" => receive_account_id
+        }
+      })
+      when is_integer(amount) and amount > 0 do
+    with {:ok, _account} <- user_account_sercurity_check(conn, account_id),
+         {:ok,
+          %{
+            create_send_ledger_step: send_transaction,
+            create_receive_ledger_step: receive_transaction
+          }} <-
+           Transactions.transfer(amount, account_id, receive_account_id) do
       conn
-      |> put_status(:created)
-      |> put_resp_header("location", Routes.transaction_path(conn, :show, transaction))
-      |> render("show.json", transaction: transaction)
+      |> render_resp(send_transaction, receive_transaction)
     end
   end
 
   def show(conn, %{"id" => id}) do
+    with {:ok, user_id} <- fetch_current_user_id(conn) do
+      # foo
+    end
+
     transaction = Transactions.get_ledger!(!id)
     render(conn, "show.json", transaction: transaction)
   end
@@ -113,5 +93,28 @@ defmodule CyptoBankWeb.TransactionController do
     with {:ok, %Ledger{}} <- Transactions.delete_ledger(transaction) do
       send_resp(conn, :no_content, "")
     end
+  end
+
+  defp user_account_sercurity_check(conn, account_id) do
+    with {:ok, user_id} <- fetch_current_user_id(conn) do
+      Accounts.get_account_for_user!(user_id, account_id)
+    end
+  end
+
+  defp render_resp(conn, transaction) do
+    conn
+    |> put_status(:created)
+    |> put_resp_header("location", Routes.transaction_path(conn, :show, transaction))
+    |> render("show.json", transaction: transaction)
+  end
+
+  defp render_resp(conn, send_transaction, receive_transaction) do
+    conn
+    |> put_status(:created)
+    |> put_resp_header("location", Routes.transaction_path(conn, :show, send_transaction))
+    |> render("transfer.json",
+      send_transaction: send_transaction,
+      receive_transaction: receive_transaction
+    )
   end
 end
