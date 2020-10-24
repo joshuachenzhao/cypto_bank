@@ -29,12 +29,12 @@ defmodule CyptoBankWeb.TransactionController do
     with {:ok, _account} <- user_account_sercurity_check(conn, account_id),
          {:ok, %{create_deposit_ledger_step: transaction}} <-
            Transactions.deposite(amount, account_id) do
-      conn |> render_resp(transaction)
+      conn |> do_render("show.json", [transaction: transaction], :deposit)
     end
   end
 
   @doc """
-  create deposit and withdraw transaction for self account
+  Deposit and withdrawal transaction for self account
   """
   def withdrawal(conn, %{
         "transaction" => %{"account_id" => account_id, "amount" => amount, "type" => "withdrawal"}
@@ -43,12 +43,12 @@ defmodule CyptoBankWeb.TransactionController do
     with {:ok, _account} <- user_account_sercurity_check(conn, account_id),
          {:ok, %{create_withdrawal_ledger_step: transaction}} <-
            Transactions.withdrawal(amount, account_id) do
-      conn |> render_resp(transaction)
+      conn |> do_render("show.json", [transaction: transaction], :withdrawal)
     end
   end
 
   @doc """
-  create deposit and withdraw transaction for self account
+  Transfer function between accounts
   """
   def transfer(conn, %{
         "transaction" => %{
@@ -67,7 +67,14 @@ defmodule CyptoBankWeb.TransactionController do
           }} <-
            Transactions.transfer(amount, account_id, receive_account_id) do
       conn
-      |> render_resp(send_transaction, receive_transaction)
+      |> do_render(
+        "transfer.json",
+        [
+          send_transaction: send_transaction,
+          receive_transaction: receive_transaction
+        ],
+        :transfer
+      )
     end
   end
 
@@ -87,34 +94,16 @@ defmodule CyptoBankWeb.TransactionController do
     end
   end
 
-  def delete(conn, %{"id" => id}) do
-    transaction = Transactions.get_ledger!(!id)
-
-    with {:ok, %Ledger{}} <- Transactions.delete_ledger(transaction) do
-      send_resp(conn, :no_content, "")
-    end
-  end
-
   defp user_account_sercurity_check(conn, account_id) do
     with {:ok, user_id} <- fetch_current_user_id(conn) do
       Accounts.get_account_for_user!(user_id, account_id)
     end
   end
 
-  defp render_resp(conn, transaction) do
+  defp do_render(conn, view_template, params, controller_fn) do
     conn
     |> put_status(:created)
-    |> put_resp_header("location", Routes.transaction_path(conn, :show, transaction))
-    |> render("show.json", transaction: transaction)
-  end
-
-  defp render_resp(conn, send_transaction, receive_transaction) do
-    conn
-    |> put_status(:created)
-    |> put_resp_header("location", Routes.transaction_path(conn, :show, send_transaction))
-    |> render("transfer.json",
-      send_transaction: send_transaction,
-      receive_transaction: receive_transaction
-    )
+    |> put_resp_header("location", Routes.transaction_path(conn, controller_fn))
+    |> render(view_template, params)
   end
 end
