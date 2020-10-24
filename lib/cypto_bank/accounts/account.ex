@@ -6,10 +6,10 @@ defmodule CyptoBank.Accounts.Account do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  @required_attrs ~w(balance)a
+  @required_attrs ~w(balance user_id)a
 
   schema "accounts" do
-    field :balance, :integer
+    field :balance, :integer, default: 0
 
     belongs_to(:user, User)
 

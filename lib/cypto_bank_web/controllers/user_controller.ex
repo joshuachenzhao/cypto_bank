@@ -3,6 +3,7 @@ defmodule CyptoBankWeb.UserController do
 
   alias CyptoBank.Accounts
   alias CyptoBank.Accounts.User
+  alias CyptoBankWeb.Helpers
   alias CyptoBankWeb.{UserView, ErrorView}
 
   action_fallback CyptoBankWeb.FallbackController
@@ -19,6 +20,11 @@ defmodule CyptoBankWeb.UserController do
       |> put_resp_header("location", Routes.user_path(conn, :show, user))
       |> render("show.json", user: user)
     end
+  end
+
+  def show_current_user(conn, _params) do
+    user = Helpers.current_user(conn)
+    render(conn, "show.json", user: user)
   end
 
   def show(conn, %{"id" => id}) do

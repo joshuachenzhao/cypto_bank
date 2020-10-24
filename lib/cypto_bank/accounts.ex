@@ -4,8 +4,65 @@ defmodule CyptoBank.Accounts do
   """
 
   import Ecto.Query, warn: false
+  import CyptoBank.Helpers.Query
+
   alias CyptoBank.Repo
+  alias CyptoBank.Accounts.Account
   alias CyptoBank.Accounts.User
+
+  @doc """
+  create account for user
+  """
+  def create_account_for_user(user_id, attrs \\ %{}) do
+    attrs = Map.put(attrs, "user_id", user_id)
+
+    %Account{}
+    |> Account.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def list_accounts_for_user(user_id) do
+    Account
+    |> query_join(:user, :id, user_id)
+    |> Repo.all()
+  end
+
+  def get_account_for_user!(user_id, account_id) do
+    Account
+    |> query_join(:user, :id, user_id)
+    |> Repo.get!(account_id)
+  end
+
+  # TODO need to break the context
+  # --------------------------------------------------
+
+  @doc """
+  show current user details
+  """
+  def current_user(conn) do
+    conn.assigns
+    |> Map.get(:user_sub, nil)
+    |> case do
+      nil -> nil
+      user_sub -> get_user_by_sub(user_sub)
+    end
+  end
+
+  @doc """
+  show current user id
+  """
+  def current_user_id(conn) do
+    conn
+    |> current_user
+    |> Map.get(:id)
+  end
+
+  @doc """
+  retrive user from Repo by user_sub from AWS Cognito user pool
+  """
+  def get_user_by_sub(user_sub) do
+    Repo.get_by!(User, user_sub: user_sub)
+  end
 
   def list_users do
     Repo.all(User)

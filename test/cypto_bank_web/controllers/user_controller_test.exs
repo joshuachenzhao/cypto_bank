@@ -146,7 +146,7 @@ defmodule CyptoBankWeb.UserControllerTest do
     %{user: user}
   end
 
-  defp setup_current_user(conn) do
+  def setup_current_user(conn) do
     current_user = fixture(:current_user)
 
     {:ok,

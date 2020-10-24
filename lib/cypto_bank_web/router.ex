@@ -17,9 +17,12 @@ defmodule CyptoBankWeb.Router do
 
   scope "/api", CyptoBankWeb do
     pipe_through [:api, :api_auth]
+    get("/current_user", UserController, :get_current_user)
+
     resources "/users", UserController, except: [:new, :edit]
+    resources "/accounts", AccountController, except: [:new, :edit]
+
     # TODO
-    # resources "/accounts", AccountController
     # resources "/admins", AdminController
     # resources "/transactions", TransactionController
     # resources "/adjustments", AdjustmentController
