@@ -20,3 +20,6 @@ config :cypto_bank, CyptoBankWeb.Endpoint,
 
 # Print only warnings and errors during test
 config :logger, level: :warn
+
+# Increase test speed by decrease test round
+config :bcrypt_elixir, :log_rounds, 4

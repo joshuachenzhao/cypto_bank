@@ -11,6 +11,10 @@ config :cypto_bank,
   ecto_repos: [CyptoBank.Repo],
   generators: [binary_id: true]
 
+# Add support for microseconds at the database level
+# avoid having to configure it on every migration file
+config :cypto_bank, CyptoBank.Repo, migration_timestamps: [type: :utc_datetime_usec]
+
 # Configures the endpoint
 config :cypto_bank, CyptoBankWeb.Endpoint,
   url: [host: "localhost"],
