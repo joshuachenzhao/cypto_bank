@@ -18,12 +18,25 @@ defmodule CyptoBankWeb.Router do
 
   scope "/api", CyptoBankWeb do
     pipe_through [:api, :api_auth]
-    get("/current_user", UserController, :show_current_user)
+
+    # get("/current_user", UserController, :show_current_user) do
+    #   resources("/accounts", AccountController, only: [:index, :show]) do
+    #     resources("/transactions", TransactionController, only: [:index, :show])
+    #   end
+    # end
 
     resources "/users", UserController, except: [:create, :new, :edit]
-    resources "/accounts", AccountController, except: [:new, :edit]
-    # DOING
-    resources "/ledgers", TransactionController, except: [:new, :edit]
+
+    get("/current_user", UserController, :show_current_user)
+    get("/current_user/accounts", AccountController, :index)
+    get("/current_user/accounts/:account_id", AccountController, :show)
+    get("/current_user/accounts/:account_id/transactions", TransactionController, :index)
+
+    get(
+      "/current_user/accounts/:account_id/transactions/:transaction_id",
+      TransactionController,
+      :show
+    )
 
     post("/transactions/deposit", TransactionController, :deposit)
     post("/transactions/withdrawal", TransactionController, :withdrawal)
@@ -31,9 +44,14 @@ defmodule CyptoBankWeb.Router do
 
     # TODO
     # resources "/admins", AdminController
-    # resources "/transactions", TransactionController
     # resources "/adjustments", AdjustmentController
   end
+
+  # scope "/api/accounts", CyptoBankWeb do
+  #   pipe_through [:api, :api_auth, :account_ownership]
+  #
+  #   get("/transactions", TransactionController, :index)
+  # end
 
   # Enables LiveDashboard only for development
   #
