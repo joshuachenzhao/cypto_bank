@@ -3,6 +3,7 @@ defmodule CyptoBank.Transactions do
   The Transactions context.
   """
   import Ecto.Query, warn: false
+  import CyptoBank.Helpers.Query
   alias Ecto.Multi
 
   alias CyptoBank.Repo
@@ -14,7 +15,19 @@ defmodule CyptoBank.Transactions do
     Repo.all(Ledger)
   end
 
+  def list_ledgers_for_account(account_id) do
+    Ledger
+    |> query_join(:account, :id, account_id)
+    |> Repo.all()
+  end
+
   def get_ledger!(id), do: Repo.get!(Ledger, id)
+
+  def get_ledger_for_account!(transaction_id, account_id) do
+    Ledger
+    |> query_join(:account, :id, account_id)
+    |> Repo.get!(transaction_id)
+  end
 
   def create_ledger(attrs \\ %{}) do
     %Ledger{}

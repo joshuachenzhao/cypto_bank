@@ -11,9 +11,11 @@ defmodule CyptoBankWeb.TransactionController do
   # TODO
   # 1. index for admin to show all transactions
   # 2. index for client to show all transactions belongs to
-  def index(conn, _params) do
-    ledgers = Transactions.list_ledgers()
-    render(conn, "index.json", ledgers: ledgers)
+  def index(conn, %{"account_id" => account_id}) do
+    with {:ok, _account} <- user_account_sercurity_check(conn, account_id) do
+      ledgers = Transactions.list_ledgers_for_account(account_id)
+      render(conn, "index.json", ledgers: ledgers)
+    end
   end
 
   @doc """
@@ -69,13 +71,11 @@ defmodule CyptoBankWeb.TransactionController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    with {:ok, user_id} <- fetch_current_user_id(conn) do
-      # foo
+  def show(conn, %{"account_id" => account_id, "transaction_id" => transaction_id}) do
+    with {:ok, _account} <- user_account_sercurity_check(conn, account_id) do
+      transaction = Transactions.get_ledger_for_account!(transaction_id, account_id)
+      render(conn, "show.json", transaction: transaction)
     end
-
-    transaction = Transactions.get_ledger!(!id)
-    render(conn, "show.json", transaction: transaction)
   end
 
   def update(conn, %{"id" => id, "transaction" => transaction_params}) do

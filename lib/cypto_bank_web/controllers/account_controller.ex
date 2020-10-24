@@ -24,7 +24,7 @@ defmodule CyptoBankWeb.AccountController do
     end
   end
 
-  def show(conn, %{"id" => account_id}) do
+  def show(conn, %{"account_id" => account_id}) do
     with {:ok, user_id} <- fetch_current_user_id(conn),
          {:ok, account} <- Accounts.get_account_for_user!(user_id, account_id) do
       render(conn, "show.json", account: account)
