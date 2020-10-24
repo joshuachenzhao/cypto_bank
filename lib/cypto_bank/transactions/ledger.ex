@@ -3,6 +3,7 @@ defmodule CyptoBank.Transactions.Ledger do
   import Ecto.Changeset
   import EctoEnum, only: [defenum: 3]
 
+  alias CyptoBank.Accounts
   alias CyptoBank.Accounts.Account
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -45,5 +46,54 @@ defmodule CyptoBank.Transactions.Ledger do
     |> cast(attrs, @permitted_attrs)
     |> validate_required(@required_attrs)
     |> EctoEnum.validate_enum(:type)
+    |> sanitize_amount()
+    |> check_credit_limit()
+    |> format_double_entry_amount()
   end
+
+  @doc """
+  absolute amount to avoid negative amount input
+  """
+  def sanitize_amount(%Ecto.Changeset{valid?: true, changes: %{amount: amount}} = changeset) do
+    put_change(changeset, :amount, abs(amount))
+  end
+
+  defp check_credit_limit(%Ecto.Changeset{valid?: false} = changeset), do: changeset
+
+  defp check_credit_limit(
+         %Ecto.Changeset{
+           valid?: true,
+           changes: %{type: type, amount: amount, account_id: account_id}
+         } = changeset
+       )
+       when type == :withdrawal or type == :transfer_pay do
+    with {:ok, _amount} <- do_check_withdraw_limit(amount, account_id) do
+      changeset
+    else
+      {:error, error} ->
+        add_error(changeset, :error, error)
+    end
+  end
+
+  defp do_check_withdraw_limit(amount, account_id) do
+    %Account{balance: balance} = Accounts.get_account!(account_id)
+
+    if amount <= balance,
+      do: {:ok, amount},
+      else:
+        {:error,
+         "Current balance: #{balance}, not sufficient for withdraw/transfer of $#{amount}"}
+  end
+
+  defp format_double_entry_amount(
+         %Ecto.Changeset{
+           valid?: true,
+           changes: %{type: type, amount: amount}
+         } = changeset
+       )
+       when type == :withdrawal or type == :transfer_pay do
+    put_change(changeset, :amount, cr_ledger_entry(amount))
+  end
+
+  defp cr_ledger_entry(amount), do: -amount
 end
