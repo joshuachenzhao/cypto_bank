@@ -3,6 +3,7 @@ defmodule CyptoBankWeb.UserController do
 
   alias CyptoBank.Accounts
   alias CyptoBank.Accounts.User
+  alias CyptoBankWeb.{UserView, ErrorView}
 
   action_fallback CyptoBankWeb.FallbackController
 
@@ -38,6 +39,22 @@ defmodule CyptoBankWeb.UserController do
 
     with {:ok, %User{}} <- Accounts.delete_user(user) do
       send_resp(conn, :no_content, "")
+    end
+  end
+
+  def sign_in(conn, %{"email" => email, "password" => password}) do
+    case Accounts.authenticate_user(email, password) do
+      {:ok, user} ->
+        conn
+        |> put_status(:ok)
+        |> put_view(UserView)
+        |> render("sign_in.json", user: user)
+
+      {:error, message} ->
+        conn
+        |> put_status(:unauthorized)
+        |> put_view(ErrorView)
+        |> render("401.json", message: message)
     end
   end
 end
