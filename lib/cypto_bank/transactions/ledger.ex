@@ -58,8 +58,6 @@ defmodule CyptoBank.Transactions.Ledger do
     put_change(changeset, :amount, abs(amount))
   end
 
-  defp check_credit_limit(%Ecto.Changeset{valid?: false} = changeset), do: changeset
-
   defp check_credit_limit(
          %Ecto.Changeset{
            valid?: true,
@@ -75,6 +73,8 @@ defmodule CyptoBank.Transactions.Ledger do
     end
   end
 
+  defp check_credit_limit(changeset), do: changeset
+
   defp do_check_withdraw_limit(amount, account_id) do
     %Account{balance: balance} = Accounts.get_account!(account_id)
 
@@ -82,7 +82,7 @@ defmodule CyptoBank.Transactions.Ledger do
       do: {:ok, amount},
       else:
         {:error,
-         "Current balance: #{balance}, not sufficient for withdraw/transfer of $#{amount}"}
+         "Current balance: #{balance}, not sufficient for withdraw or transfer of $#{amount}"}
   end
 
   defp format_double_entry_amount(
@@ -94,6 +94,8 @@ defmodule CyptoBank.Transactions.Ledger do
        when type == :withdrawal or type == :transfer_pay do
     put_change(changeset, :amount, cr_ledger_entry(amount))
   end
+
+  defp format_double_entry_amount(changeset), do: changeset
 
   defp cr_ledger_entry(amount), do: -amount
 end
