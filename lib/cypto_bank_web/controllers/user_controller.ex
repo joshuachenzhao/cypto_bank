@@ -1,9 +1,9 @@
 defmodule CyptoBankWeb.UserController do
   use CyptoBankWeb, :controller
+  import CyptoBankWeb.Helpers, only: [fetch_current_user: 1]
 
   alias CyptoBank.Accounts
   alias CyptoBank.Accounts.User
-  alias CyptoBankWeb.Helpers
   alias CyptoBankWeb.{UserView, ErrorView}
 
   action_fallback CyptoBankWeb.FallbackController
@@ -23,8 +23,9 @@ defmodule CyptoBankWeb.UserController do
   end
 
   def show_current_user(conn, _params) do
-    user = Helpers.current_user(conn)
-    render(conn, "show.json", user: user)
+    with {:ok, %User{} = user} <- fetch_current_user(conn) do
+      render(conn, "show.json", user: user)
+    end
   end
 
   def show(conn, %{"id" => id}) do
@@ -37,14 +38,6 @@ defmodule CyptoBankWeb.UserController do
 
     with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
       render(conn, "show.json", user: user)
-    end
-  end
-
-  def delete(conn, %{"id" => id}) do
-    user = Accounts.get_user!(id)
-
-    with {:ok, %User{}} <- Accounts.delete_user(user) do
-      send_resp(conn, :no_content, "")
     end
   end
 
