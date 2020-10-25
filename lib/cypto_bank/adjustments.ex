@@ -25,6 +25,22 @@ defmodule CyptoBank.Adjustments do
 
   def get_adjustment!(id), do: Repo.get!(Adjustment, id)
 
+  @doc """
+  Check existing adjusment that has the same original_ledger_id, to avoid duplicate 
+  adjustment requests
+  """
+  def check_no_existing_adjustment(ledger_id) do
+    from(
+      adj in Adjustment,
+      where: adj.original_ledger_id == ^ledger_id
+    )
+    |> Repo.one()
+    |> case do
+      nil -> {:ok, ledger_id}
+      %Adjustment{} -> {:error, :adjustment_already_exist}
+    end
+  end
+
   def create_adjustment(attrs \\ %{}) do
     %Adjustment{}
     |> Adjustment.changeset(attrs)
@@ -50,6 +66,16 @@ defmodule CyptoBank.Adjustments do
     |> Multi.run(:close_adjustment_step, &close_adjustment/2)
     |> Repo.transaction()
   end
+
+  # def decline_adjustment(adjustment_id) do
+  #   adjustment_id
+  #   |> get_adjustment!()
+  #   |> Adjustment.update_changeset(%{
+  #     status: :denied,
+  #     admin_id: ueer.id
+  #   })
+  #   |> repo.update()
+  # end
 
   defp retrieve_adjustment(adjustment_id) do
     fn repo, _ ->

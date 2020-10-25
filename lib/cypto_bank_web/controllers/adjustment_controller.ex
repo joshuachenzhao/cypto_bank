@@ -16,10 +16,12 @@ defmodule CyptoBankWeb.AdjustmentController do
 
   def create(conn, %{
         "account_id" => account_id,
-        "adjustment" => adjustment_params
+        "adjustment" => %{"original_ledger_id" => original_ledger_id} = adjustment_params
       }) do
     with {:ok, _account} <- account_ownership_check(conn, account_id),
-         {:ok, %Adjustment{} = adjustment} <- Adjustments.create_adjustment(adjustment_params) do
+         {:ok, _} <- Adjustments.check_no_existing_adjustment(original_ledger_id),
+         {:ok, %Adjustment{} = adjustment} <-
+           Adjustments.create_adjustment(adjustment_params) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", Routes.adjustment_path(conn, :show, adjustment))
