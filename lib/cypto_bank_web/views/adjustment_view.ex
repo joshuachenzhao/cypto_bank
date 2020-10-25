@@ -11,6 +11,18 @@ defmodule CyptoBankWeb.AdjustmentView do
   end
 
   def render("adjustment.json", %{adjustment: adjustment}) do
-    %{id: adjustment.id}
+    %{
+      adjustment: %{
+        id: adjustment.id,
+        adjustment: adjustment.amount,
+        status: adjustment.status,
+        memo: adjustment.memo,
+        admin_id: adjustment.admin_id,
+        original_ledger_id: adjustment.original_ledger_id,
+        adjust_ledger_id: adjustment.adjust_ledger_id,
+        inserted_at: adjustment.inserted_at,
+        updated_at: adjustment.updated_at
+      }
+    }
   end
 end

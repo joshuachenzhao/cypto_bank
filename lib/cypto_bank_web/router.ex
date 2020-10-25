@@ -22,8 +22,17 @@ defmodule CyptoBankWeb.Router do
     get("/users", UserController, :index)
     get("/current_user", UserController, :show_current_user)
     get("/current_user/accounts", AccountController, :index)
+
+    post("/current_user/accounts", AccountController, :create)
+
     get("/current_user/accounts/:account_id", AccountController, :show)
     get("/current_user/accounts/:account_id/transactions", TransactionController, :index)
+
+    post "/current_user/accounts/:account_id/adjustments", AdjustmentController, :create
+
+    post "/current_user/accounts/:account_id/adjustments/:adjustment_id",
+         AdjustmentController,
+         :show
 
     get(
       "/current_user/accounts/:account_id/transactions/:transaction_id",
@@ -36,17 +45,14 @@ defmodule CyptoBankWeb.Router do
     post("/transactions/transfer", TransactionController, :transfer)
 
     # DOING
-    resources "/adjustments", AdjustmentController, except: [:new, :edit]
+    get "/admin/adjustments", AdjustmentController, :index
+    get "/admin/adjustments/:adjustment_id", AdjustmentController, :show
+    put "/admin/adjustments/:adjustment_id", AdjustmentController, :approve
+
     # TODO
     # resources "/admins", AdminController
     # resources "/adjustments", AdjustmentController
   end
-
-  # scope "/api/accounts", CyptoBankWeb do
-  #   pipe_through [:api, :api_auth, :account_ownership]
-  #
-  #   get("/transactions", TransactionController, :index)
-  # end
 
   # Enables LiveDashboard only for development
   #

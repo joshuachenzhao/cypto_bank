@@ -2,6 +2,7 @@ defmodule CyptoBankWeb.Helpers do
   import Plug.Conn
 
   alias CyptoBank.Accounts
+  alias CyptoBank.Transactions
   alias CyptoBank.Accounts.User
 
   def fetch_current_user_id(conn) do
@@ -40,6 +41,12 @@ defmodule CyptoBankWeb.Helpers do
   def account_ownership_check(conn, account_id) do
     with {:ok, user} <- fetch_current_user(conn) do
       Accounts.fetch_account_for_user(user, account_id)
+    end
+  end
+
+  def transaction_ownership_check(conn, ledger_id) do
+    with {:ok, _user} <- fetch_current_user(conn) do
+      Transactions.get_ledger!(ledger_id)
     end
   end
 end

@@ -34,7 +34,6 @@ defmodule CyptoBank.Adjustments do
   # DOING
   # TODO
   # set the admin_id correct
-  # add view
   # auto decline if :no_sufficient_balance
   @doc """
   Approve an adjustment
@@ -60,8 +59,16 @@ defmodule CyptoBank.Adjustments do
              preload: [:original_ledger]
            )
            |> repo.one() do
-        nil -> {:error, :adjustment_not_found}
-        adjustment -> {:ok, {adjustment, adjustment.original_ledger.account_id}}
+        %Adjustment{status: :pending} = adjustment ->
+          {:ok, {adjustment, adjustment.original_ledger.account_id}}
+
+        %Adjustment{status: status} ->
+          {:error,
+           {:adjustment_has_been_processed,
+            "Adjustment has already been processed, status: #{status}"}}
+
+        nil ->
+          {:error, :adjustment_not_found}
       end
     end
   end

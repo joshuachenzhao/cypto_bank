@@ -31,6 +31,12 @@ defmodule CyptoBankWeb.FallbackController do
     |> json(%{"error" => message})
   end
 
+  def call(conn, {:error, error_step, {error_type, message}, _}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> json(%{"error" => %{"transaction_error" => %{error_step => %{error_type => message}}}})
+  end
+
   def call(conn, {:error, error_step, message, _}) do
     conn
     |> put_status(:unprocessable_entity)

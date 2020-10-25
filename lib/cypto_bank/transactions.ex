@@ -83,10 +83,8 @@ defmodule CyptoBank.Transactions do
   end
 
   defp retrieve_account(amount, account_id) do
-    # fn _repo, _ ->
     fn repo, _ ->
       case from(acc in Account, where: acc.id == ^account_id) |> repo.one() do
-        # case Accounts.get_account!(account_id) do
         nil -> {:error, :account_not_found}
         account -> {:ok, {amount, account}}
       end
