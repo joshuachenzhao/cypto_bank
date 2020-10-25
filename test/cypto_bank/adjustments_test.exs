@@ -39,30 +39,5 @@ defmodule CyptoBank.AdjustmentsTest do
     test "create_adjustment/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Adjustments.create_adjustment(@invalid_attrs)
     end
-
-    test "update_adjustment/2 with valid data updates the adjustment" do
-      adjustment = adjustment_fixture()
-      assert {:ok, %Adjustment{} = adjustment} = Adjustments.update_adjustment(adjustment, @update_attrs)
-      assert adjustment.amount == 43
-      assert adjustment.note == "some updated note"
-      assert adjustment.status == "some updated status"
-    end
-
-    test "update_adjustment/2 with invalid data returns error changeset" do
-      adjustment = adjustment_fixture()
-      assert {:error, %Ecto.Changeset{}} = Adjustments.update_adjustment(adjustment, @invalid_attrs)
-      assert adjustment == Adjustments.get_adjustment!(adjustment.id)
-    end
-
-    test "delete_adjustment/1 deletes the adjustment" do
-      adjustment = adjustment_fixture()
-      assert {:ok, %Adjustment{}} = Adjustments.delete_adjustment(adjustment)
-      assert_raise Ecto.NoResultsError, fn -> Adjustments.get_adjustment!(adjustment.id) end
-    end
-
-    test "change_adjustment/1 returns a adjustment changeset" do
-      adjustment = adjustment_fixture()
-      assert %Ecto.Changeset{} = Adjustments.change_adjustment(adjustment)
-    end
   end
 end

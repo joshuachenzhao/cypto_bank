@@ -10,6 +10,10 @@ defmodule CyptoBankWeb.TransactionView do
     %{data: render_one(transaction, TransactionView, "transaction.json")}
   end
 
+  @doc """
+  Render transfer api return view
+  1. transfer view includes both send and receive transactions currently
+  """
   def render("transfer.json", %{
         send_transaction: send_transaction,
         receive_transaction: receive_transaction

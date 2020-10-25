@@ -19,14 +19,16 @@ defmodule CyptoBankWeb.Router do
   scope "/api", CyptoBankWeb do
     pipe_through [:api, :api_auth]
 
-    get("/users", UserController, :index)
     get("/current_user", UserController, :show_current_user)
     get("/current_user/accounts", AccountController, :index)
-
     post("/current_user/accounts", AccountController, :create)
-
     get("/current_user/accounts/:account_id", AccountController, :show)
-    get("/current_user/accounts/:account_id/transactions", TransactionController, :index)
+
+    get(
+      "/current_user/accounts/:account_id/transactions",
+      TransactionController,
+      :index_for_account
+    )
 
     post "/current_user/accounts/:account_id/adjustments", AdjustmentController, :create
 
@@ -44,14 +46,12 @@ defmodule CyptoBankWeb.Router do
     post("/transactions/withdrawal", TransactionController, :withdrawal)
     post("/transactions/transfer", TransactionController, :transfer)
 
-    # DOING
+    get("/admin/users", UserController, :index)
+    get("/admin/users/:user_id", UserController, :show)
+    get("/admin/transactions", TransactionController, :index_for_admin)
     get "/admin/adjustments", AdjustmentController, :index
     get "/admin/adjustments/:adjustment_id", AdjustmentController, :show
     put "/admin/adjustments/:adjustment_id", AdjustmentController, :approve
-
-    # TODO
-    # resources "/admins", AdminController
-    # resources "/adjustments", AdjustmentController
   end
 
   # Enables LiveDashboard only for development
@@ -70,7 +70,7 @@ defmodule CyptoBankWeb.Router do
     end
   end
 
-  # Plug function
+  # TODO Plug function
   defp ensure_authenticated(conn, _opts) do
     current_user_id = get_session(conn, :current_user_id)
 

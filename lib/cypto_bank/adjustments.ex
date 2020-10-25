@@ -17,6 +17,7 @@ defmodule CyptoBank.Adjustments do
     Repo.all(Adjustment)
   end
 
+  # XXX
   def list_adjustments_for_user(account_id) do
     Adjustment
     |> query_join(:account, :id, account_id)
@@ -166,23 +167,6 @@ defmodule CyptoBank.Adjustments do
       })
       |> repo.update()
     end
-  end
-
-  def reject_adjustment() do
-  end
-
-  def update_adjustment(%Adjustment{} = adjustment, attrs) do
-    adjustment
-    |> Adjustment.changeset(attrs)
-    |> Repo.update()
-  end
-
-  def delete_adjustment(%Adjustment{} = adjustment) do
-    Repo.delete(adjustment)
-  end
-
-  def change_adjustment(%Adjustment{} = adjustment, attrs \\ %{}) do
-    Adjustment.changeset(adjustment, attrs)
   end
 
   def format_double_entry_amount(:deposit, amount), do: abs(amount)

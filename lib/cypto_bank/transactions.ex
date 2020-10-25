@@ -47,7 +47,7 @@ defmodule CyptoBank.Transactions do
   end
 
   @doc """
-  withdrawal money of given amount to account with account_id
+  Withdrawal money of given amount to account with account_id
   """
   def withdrawal(amount, account_id) do
     Multi.new()
