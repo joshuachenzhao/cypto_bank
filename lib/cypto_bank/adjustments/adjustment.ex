@@ -3,6 +3,7 @@ defmodule CyptoBank.Adjustments.Adjustment do
   import Ecto.Changeset
   import EctoEnum, only: [defenum: 3]
 
+  alias CyptoBank.Accounts.User
   alias CyptoBank.Transactions.Ledger
 
   @primary_key {:id, :binary_id, autogenerate: true}
