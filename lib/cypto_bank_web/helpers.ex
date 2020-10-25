@@ -29,6 +29,10 @@ defmodule CyptoBankWeb.Helpers do
     |> Accounts.get_user()
   end
 
+  def verify_admin_access(conn) do
+    conn |> fetch_current_user() |> admin_check
+  end
+
   def admin_check({:ok, %User{is_admin: true} = user}), do: {:ok, user}
   def admin_check({:ok, %User{}}), do: {:error, :no_admin_access}
   def admin_check({:error, error}), do: {:error, error}
