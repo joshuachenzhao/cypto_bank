@@ -10,6 +10,10 @@ defmodule CyptoBankWeb.UserView do
     %{data: render_one(user, UserView, "user.json")}
   end
 
+  def render("sign_in.json", %{user: user}) do
+    %{data: render_one(user, UserView, "user.json")}
+  end
+
   def render("user.json", %{user: user}) do
     %{
       id: user.id,
@@ -18,9 +22,5 @@ defmodule CyptoBankWeb.UserView do
       inserted_at: user.inserted_at,
       updated_at: user.updated_at
     }
-  end
-
-  def render("sign_in.json", %{user: user}) do
-    %{data: render_one(user, UserView, "user.json")}
   end
 end
