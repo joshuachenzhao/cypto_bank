@@ -64,6 +64,8 @@ defmodule CyptoBank.Transactions.Ledger do
     put_change(changeset, :amount, abs(amount))
   end
 
+  def sanitize_amount(changeset), do: changeset
+
   defp check_credit_limit(
          %Ecto.Changeset{
            valid?: true,
