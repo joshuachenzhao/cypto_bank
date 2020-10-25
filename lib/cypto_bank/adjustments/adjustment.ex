@@ -47,7 +47,8 @@ defmodule CyptoBank.Adjustments.Adjustment do
     |> cast(attrs, @permitted_attrs)
     |> validate_required(@required_attrs)
     |> EctoEnum.validate_enum(:status)
-    |> foreign_key_constraint(:admin_id, :original_ledger_id)
+    |> foreign_key_constraint(:admin_id)
+    |> foreign_key_constraint(:original_ledger_id)
   end
 
   @doc false

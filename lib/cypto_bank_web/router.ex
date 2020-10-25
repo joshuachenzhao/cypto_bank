@@ -12,6 +12,8 @@ defmodule CyptoBankWeb.Router do
 
   scope "/api", CyptoBankWeb do
     pipe_through :api
+
+    # User authentication endpoints
     post "/users/sign_in", UserController, :sign_in
     post "/users/sign_up", UserController, :create
   end
@@ -19,33 +21,39 @@ defmodule CyptoBankWeb.Router do
   scope "/api", CyptoBankWeb do
     pipe_through [:api, :api_auth]
 
-    get("/current_user", UserController, :show_current_user)
-    get("/current_user/accounts", AccountController, :index)
-    post("/current_user/accounts", AccountController, :create)
-    get("/current_user/accounts/:account_id", AccountController, :show)
+    # User/Account information endpoints
+    get("/user", UserController, :show_current_user)
+    get("/user/accounts", AccountController, :index)
+    get("/user/accounts/:account_id", AccountController, :show)
+    post("/user/accounts", AccountController, :create)
 
+    # Transaction endpoints
     get(
-      "/current_user/accounts/:account_id/transactions",
+      "/user/accounts/:account_id/transactions",
       TransactionController,
       :index_for_account
     )
 
-    post "/current_user/accounts/:account_id/adjustments", AdjustmentController, :create
-
-    post "/current_user/accounts/:account_id/adjustments/:adjustment_id",
-         AdjustmentController,
-         :show
-
     get(
-      "/current_user/accounts/:account_id/transactions/:transaction_id",
+      "/user/accounts/:account_id/transactions/:transaction_id",
       TransactionController,
       :show
     )
 
-    post("/transactions/deposit", TransactionController, :deposit)
-    post("/transactions/withdrawal", TransactionController, :withdrawal)
-    post("/transactions/transfer", TransactionController, :transfer)
+    post("/user/accounts/:account_id/deposit", TransactionController, :deposit)
+    post("/user/accounts/:account_id/withdrawal", TransactionController, :withdrawal)
+    post("/user/accounts/:account_id/transfer", TransactionController, :transfer)
 
+    # Adjustment endpoints
+    post("/user/accounts/:account_id/adjustments", AdjustmentController, :create)
+
+    post(
+      "/user/accounts/:account_id/adjustments/:adjustment_id",
+      AdjustmentController,
+      :show
+    )
+
+    # Admin/Operation endpoints
     get("/admin/users", UserController, :index)
     get("/admin/users/:user_id", UserController, :show)
     get("/admin/transactions", TransactionController, :index_for_admin)
@@ -70,7 +78,8 @@ defmodule CyptoBankWeb.Router do
     end
   end
 
-  # TODO Plug function
+  # Plug function
+  # NOTE better put in a seperate plug module, time is limited
   defp ensure_authenticated(conn, _opts) do
     current_user_id = get_session(conn, :current_user_id)
 

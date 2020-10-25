@@ -35,13 +35,14 @@ defmodule CyptoBankWeb.TransactionController do
   create deposit and withdraw transaction for self account
   """
   def deposit(conn, %{
-        "transaction" => %{"account_id" => account_id, "amount" => amount, "type" => "deposit"}
+        "account_id" => account_id,
+        "transaction" => %{"amount" => amount}
       })
       when is_integer(amount) and amount > 0 do
     with {:ok, _account} <- verify_account_access(conn, account_id),
          {:ok, %{create_deposit_ledger_step: transaction}} <-
            Transactions.deposite(amount, account_id) do
-      conn |> do_render("show.json", [transaction: transaction], :deposit)
+      conn |> do_render("show.json", transaction: transaction)
     end
   end
 
@@ -49,13 +50,14 @@ defmodule CyptoBankWeb.TransactionController do
   Deposit and withdrawal transaction for self account
   """
   def withdrawal(conn, %{
-        "transaction" => %{"account_id" => account_id, "amount" => amount, "type" => "withdrawal"}
+        "account_id" => account_id,
+        "transaction" => %{"amount" => amount}
       })
       when is_integer(amount) and amount > 0 do
     with {:ok, _account} <- verify_account_access(conn, account_id),
          {:ok, %{create_withdrawal_ledger_step: transaction}} <-
            Transactions.withdrawal(amount, account_id) do
-      conn |> do_render("show.json", [transaction: transaction], :withdrawal)
+      conn |> do_render("show.json", transaction: transaction)
     end
   end
 
@@ -63,10 +65,9 @@ defmodule CyptoBankWeb.TransactionController do
   Transfer function between accounts
   """
   def transfer(conn, %{
+        "account_id" => account_id,
         "transaction" => %{
-          "account_id" => account_id,
           "amount" => amount,
-          "type" => "transfer_pay",
           "receive_account_id" => receive_account_id
         }
       })
@@ -81,11 +82,8 @@ defmodule CyptoBankWeb.TransactionController do
       conn
       |> do_render(
         "transfer.json",
-        [
-          send_transaction: send_transaction,
-          receive_transaction: receive_transaction
-        ],
-        :transfer
+        send_transaction: send_transaction,
+        receive_transaction: receive_transaction
       )
     end
   end
@@ -101,10 +99,9 @@ defmodule CyptoBankWeb.TransactionController do
   end
 
   # Helper fn to handle render for transactions
-  defp do_render(conn, view_template, params, controller_fn) do
+  defp do_render(conn, view_template, params) do
     conn
     |> put_status(:created)
-    |> put_resp_header("location", Routes.transaction_path(conn, controller_fn))
     |> render(view_template, params)
   end
 end
