@@ -35,6 +35,8 @@ defmodule CyptoBankWeb.Router do
     post("/transactions/withdrawal", TransactionController, :withdrawal)
     post("/transactions/transfer", TransactionController, :transfer)
 
+    # DOING
+    resources "/adjustments", AdjustmentController, except: [:new, :edit]
     # TODO
     # resources "/admins", AdminController
     # resources "/adjustments", AdjustmentController
