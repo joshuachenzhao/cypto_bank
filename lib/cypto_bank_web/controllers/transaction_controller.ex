@@ -1,8 +1,7 @@
 defmodule CyptoBankWeb.TransactionController do
   use CyptoBankWeb, :controller
-  import CyptoBankWeb.Helpers, only: [fetch_current_user: 1]
+  import CyptoBankWeb.Helpers, only: [account_ownership_check: 2]
 
-  alias CyptoBank.Accounts
   alias CyptoBank.Transactions
   alias CyptoBank.Transactions.Ledger
 
@@ -11,8 +10,12 @@ defmodule CyptoBankWeb.TransactionController do
   # TODO
   # 1. index for admin to show all transactions
   # 2. index for client to show all transactions belongs to
+  # NOTE current admin has the access to make transaction on behalf ANY account,
+  # which is security issue, but given the limited time for this code challenge,
+  # I might revisit when time is allowed, best has two admins verification in
+  # process for any admin actions.
   def index(conn, %{"account_id" => account_id}) do
-    with {:ok, _account} <- user_account_sercurity_check(conn, account_id) do
+    with {:ok, _account} <- account_ownership_check(conn, account_id) do
       ledgers = Transactions.list_ledgers_for_account(account_id)
       render(conn, "index.json", ledgers: ledgers)
     end
@@ -26,7 +29,7 @@ defmodule CyptoBankWeb.TransactionController do
         "transaction" => %{"account_id" => account_id, "amount" => amount, "type" => "deposit"}
       })
       when is_integer(amount) and amount > 0 do
-    with {:ok, _account} <- user_account_sercurity_check(conn, account_id),
+    with {:ok, _account} <- account_ownership_check(conn, account_id),
          {:ok, %{create_deposit_ledger_step: transaction}} <-
            Transactions.deposite(amount, account_id) do
       conn |> do_render("show.json", [transaction: transaction], :deposit)
@@ -40,7 +43,7 @@ defmodule CyptoBankWeb.TransactionController do
         "transaction" => %{"account_id" => account_id, "amount" => amount, "type" => "withdrawal"}
       })
       when is_integer(amount) and amount > 0 do
-    with {:ok, _account} <- user_account_sercurity_check(conn, account_id),
+    with {:ok, _account} <- account_ownership_check(conn, account_id),
          {:ok, %{create_withdrawal_ledger_step: transaction}} <-
            Transactions.withdrawal(amount, account_id) do
       conn |> do_render("show.json", [transaction: transaction], :withdrawal)
@@ -59,7 +62,7 @@ defmodule CyptoBankWeb.TransactionController do
         }
       })
       when is_integer(amount) and amount > 0 do
-    with {:ok, _account} <- user_account_sercurity_check(conn, account_id),
+    with {:ok, _account} <- account_ownership_check(conn, account_id),
          {:ok,
           %{
             create_send_ledger_step: send_transaction,
@@ -79,7 +82,7 @@ defmodule CyptoBankWeb.TransactionController do
   end
 
   def show(conn, %{"account_id" => account_id, "transaction_id" => transaction_id}) do
-    with {:ok, _account} <- user_account_sercurity_check(conn, account_id) do
+    with {:ok, _account} <- account_ownership_check(conn, account_id) do
       transaction = Transactions.get_ledger_for_account!(transaction_id, account_id)
       render(conn, "show.json", transaction: transaction)
     end
@@ -91,12 +94,6 @@ defmodule CyptoBankWeb.TransactionController do
     with {:ok, %Ledger{} = transaction} <-
            Transactions.update_ledger(transaction, transaction_params) do
       render(conn, "show.json", transaction: transaction)
-    end
-  end
-
-  defp user_account_sercurity_check(conn, account_id) do
-    with {:ok, user} <- fetch_current_user(conn) do
-      Accounts.fetch_account_for_user(user, account_id)
     end
   end
 
