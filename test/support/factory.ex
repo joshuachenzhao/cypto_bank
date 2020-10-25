@@ -29,11 +29,79 @@ defmodule CyptoBank.Factory do
     }
   end
 
+  def send_account_factory do
+    %Account{
+      balance: 30_000,
+      user: build(:user)
+    }
+  end
+
+  def receive_account_factory do
+    %Account{
+      balance: 10_000,
+      user: build(:user)
+    }
+  end
+
   def ledger_factory do
+    %Ledger{
+      amount: 10_000,
+      memo: "some memo",
+      type: :deposit,
+      account: build(:account)
+    }
+  end
+
+  def deposit_ledger_factory do
+    %Ledger{
+      amount: 10_000,
+      memo: "some memo",
+      type: :deposit,
+      account: build(:account)
+    }
+  end
+
+  def withdrawal_ledger_factory do
+    %Ledger{
+      amount: -10_000,
+      memo: "some memo",
+      type: :withdrawal,
+      account: build(:account)
+    }
+  end
+
+  def tran_send_ledger_factory do
+    %Ledger{
+      amount: -10_000,
+      memo: "some memo",
+      type: :transfer_pay,
+      account: build(:account)
+    }
+  end
+
+  def tran_rec_ledger_factory do
+    %Ledger{
+      amount: 10_000,
+      memo: "some memo",
+      type: :transfer_receive,
+      account: build(:account)
+    }
+  end
+
+  def adj_deposit_ledger_factory do
     %Ledger{
       amount: 1_000,
       memo: "some memo",
-      type: :deposit,
+      type: :adjustment,
+      account: build(:account)
+    }
+  end
+
+  def adj_withdrawal_ledger_factory do
+    %Ledger{
+      amount: -1_000,
+      memo: "some memo",
+      type: :adjustment,
       account: build(:account)
     }
   end
@@ -44,8 +112,9 @@ defmodule CyptoBank.Factory do
       user: build(:user),
       memo: "some memo",
       status: :pending,
-      original_ledger: build(:ledger),
-      adjust_ledger: build(:ledger)
+      original_ledger: build(:deposit_ledger),
+      adjust_ledger: nil,
+      admin_id: nil
     }
   end
 end

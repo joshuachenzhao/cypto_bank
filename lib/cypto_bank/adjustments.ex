@@ -4,7 +4,6 @@ defmodule CyptoBank.Adjustments do
   """
 
   import Ecto.Query, warn: false
-  import CyptoBank.Helpers.Query
   alias Ecto.Multi
 
   alias CyptoBank.Repo
@@ -12,19 +11,6 @@ defmodule CyptoBank.Adjustments do
   alias CyptoBank.Adjustments.Adjustment
   alias CyptoBank.Transactions
   alias CyptoBank.Transactions.Ledger
-
-  def list_adjustments do
-    Repo.all(Adjustment)
-  end
-
-  # XXX
-  def list_adjustments_for_user(account_id) do
-    Adjustment
-    |> query_join(:account, :id, account_id)
-    |> Repo.all()
-  end
-
-  def get_adjustment!(id), do: Repo.get!(Adjustment, id)
 
   @doc """
   Check existing adjusment that has the same original_ledger_id, to avoid duplicate 
@@ -48,6 +34,12 @@ defmodule CyptoBank.Adjustments do
     |> Repo.insert()
   end
 
+  def list_adjustments do
+    Repo.all(Adjustment)
+  end
+
+  def get_adjustment!(id), do: Repo.get!(Adjustment, id)
+
   @doc """
   Approve an adjustment
   """
@@ -68,7 +60,7 @@ defmodule CyptoBank.Adjustments do
     adjustment_id
     |> get_adjustment!()
     |> Adjustment.update_changeset(%{
-      status: :denied,
+      status: :declined,
       admin_id: admin_id
     })
     |> Repo.update()

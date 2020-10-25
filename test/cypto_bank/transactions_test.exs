@@ -1,6 +1,7 @@
 defmodule CyptoBank.TransactionsTest do
   use CyptoBank.DataCase
   import CyptoBank.Factory
+
   alias CyptoBank.Transactions
 
   describe "ledgers" do
@@ -24,29 +25,37 @@ defmodule CyptoBank.TransactionsTest do
     test "deposit/2 returns a ledger with correct amount" do
       amount = 10_000
       account = insert(:account, balance: 0)
-      ledger = insert(:ledger, account: account, amount: 10_000, type: :deposit)
+      ledger = insert(:ledger, account: insert(:account), amount: 10_000, type: :deposit)
+      account_balance = ledger.account.balance
 
       assert {:ok, %{create_deposit_ledger_step: ledger}} =
                Transactions.deposite(amount, account.id)
+
+      assert account_balance == 10_000
     end
 
-    test "withdrawal/2 returns a ledger with correct amount" do
+    test "withdrawal/2 returns a ledger with correct amount, decrease account balance by amount" do
       amount = 10_000
       account = insert(:account, balance: 20_000)
-      ledger = insert(:ledger, account: account, amount: 10_000, type: :deposit)
+      ledger = insert(:ledger, account: insert(:account), amount: 10_000, type: :deposit)
+      account_balance = ledger.account.balance
 
       assert {:ok, %{create_withdrawal_ledger_step: ledger}} =
                Transactions.withdrawal(amount, account.id)
+
+      assert account_balance == 10_000
     end
 
     test "transfer/3 returns 2 ledgers with correct amount" do
       amount = 10_000
-      send_account = insert(:account, balance: 30_000)
-      receive_account = insert(:account, balance: 10_000)
-      send_ledger = insert(:ledger, account: send_account, amount: -10_000, type: :transfer_pay)
+      send_account = insert(:send_account)
+      receive_account = insert(:receive_account)
+
+      send_ledger =
+        insert(:ledger, account: insert(:send_account), amount: -10_000, type: :transfer_pay)
 
       receive_ledger =
-        insert(:ledger, account: receive_account, amount: 10_000, type: :transfer_receive)
+        insert(:ledger, account: insert(:receive_account), amount: 10_000, type: :transfer_receive)
 
       assert {:ok,
               %{
