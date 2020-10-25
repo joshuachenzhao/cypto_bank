@@ -24,6 +24,7 @@ defmodule CyptoBank.Accounts.Account do
     account
     |> cast(attrs, @required_attrs)
     |> validate_required(@required_attrs)
+    |> foreign_key_constraint(:user_id)
     |> check_balance()
   end
 

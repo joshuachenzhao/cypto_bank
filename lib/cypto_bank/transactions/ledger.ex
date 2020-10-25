@@ -52,6 +52,7 @@ defmodule CyptoBank.Transactions.Ledger do
     |> sanitize_amount()
     |> check_credit_limit()
     |> format_double_entry_amount()
+    |> foreign_key_constraint(:account_id)
   end
 
   @doc """
