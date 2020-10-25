@@ -46,7 +46,6 @@ defmodule CyptoBank.Accounts do
   def get_account!(id), do: Repo.get!(Account, id)
 
   # TODO need to break the context
-  # --------------------------------------------------
 
   def list_users do
     Repo.all(User)
@@ -66,14 +65,6 @@ defmodule CyptoBank.Accounts do
     user
     |> User.changeset(attrs)
     |> Repo.update()
-  end
-
-  def delete_user(%User{} = user) do
-    Repo.delete(user)
-  end
-
-  def change_user(%User{} = user, attrs \\ %{}) do
-    User.changeset(user, attrs)
   end
 
   def authenticate_user(email, password) do

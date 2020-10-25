@@ -3,7 +3,6 @@ defmodule CyptoBankWeb.TransactionController do
   import CyptoBankWeb.Helpers, only: [account_ownership_check: 2]
 
   alias CyptoBank.Transactions
-  alias CyptoBank.Transactions.Ledger
 
   action_fallback CyptoBankWeb.FallbackController
 
@@ -24,7 +23,6 @@ defmodule CyptoBankWeb.TransactionController do
   @doc """
   create deposit and withdraw transaction for self account
   """
-  # TODO amount should be decimal at param entry
   def deposit(conn, %{
         "transaction" => %{"account_id" => account_id, "amount" => amount, "type" => "deposit"}
       })
@@ -84,15 +82,6 @@ defmodule CyptoBankWeb.TransactionController do
   def show(conn, %{"account_id" => account_id, "transaction_id" => transaction_id}) do
     with {:ok, _account} <- account_ownership_check(conn, account_id) do
       transaction = Transactions.get_ledger_for_account!(transaction_id, account_id)
-      render(conn, "show.json", transaction: transaction)
-    end
-  end
-
-  def update(conn, %{"id" => id, "transaction" => transaction_params}) do
-    transaction = Transactions.get_ledger!(!id)
-
-    with {:ok, %Ledger{} = transaction} <-
-           Transactions.update_ledger(transaction, transaction_params) do
       render(conn, "show.json", transaction: transaction)
     end
   end

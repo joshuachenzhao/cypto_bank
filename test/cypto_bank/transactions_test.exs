@@ -39,30 +39,5 @@ defmodule CyptoBank.TransactionsTest do
     test "create_ledger/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Transactions.create_ledger(@invalid_attrs)
     end
-
-    test "update_ledger/2 with valid data updates the ledger" do
-      ledger = ledger_fixture()
-      assert {:ok, %Ledger{} = ledger} = Transactions.update_ledger(ledger, @update_attrs)
-      assert ledger.amount == 43
-      assert ledger.note == "some updated note"
-      assert ledger.type == "some updated type"
-    end
-
-    test "update_ledger/2 with invalid data returns error changeset" do
-      ledger = ledger_fixture()
-      assert {:error, %Ecto.Changeset{}} = Transactions.update_ledger(ledger, @invalid_attrs)
-      assert ledger == Transactions.get_ledger!(ledger.id)
-    end
-
-    test "delete_ledger/1 deletes the ledger" do
-      ledger = ledger_fixture()
-      assert {:ok, %Ledger{}} = Transactions.delete_ledger(ledger)
-      assert_raise Ecto.NoResultsError, fn -> Transactions.get_ledger!(ledger.id) end
-    end
-
-    test "change_ledger/1 returns a ledger changeset" do
-      ledger = ledger_fixture()
-      assert %Ecto.Changeset{} = Transactions.change_ledger(ledger)
-    end
   end
 end

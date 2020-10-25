@@ -35,16 +35,6 @@ defmodule CyptoBank.Transactions do
     |> Repo.insert()
   end
 
-  def update_ledger(%Ledger{} = ledger, attrs) do
-    ledger
-    |> Ledger.changeset(attrs)
-    |> Repo.update()
-  end
-
-  def change_ledger(%Ledger{} = ledger, attrs \\ %{}) do
-    Ledger.changeset(ledger, attrs)
-  end
-
   @doc """
   Deposite money of given amount to account with account_id
   """
