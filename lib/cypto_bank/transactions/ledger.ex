@@ -5,6 +5,7 @@ defmodule CyptoBank.Transactions.Ledger do
 
   alias CyptoBank.Accounts
   alias CyptoBank.Accounts.Account
+  alias CyptoBank.Adjustments.Adjustment
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -33,9 +34,10 @@ defmodule CyptoBank.Transactions.Ledger do
     field :amount, :integer, null: false
     field :memo, :string
     field :type, LedgerType, null: false
-    # field :account_id, :binary_id, null: false
 
     belongs_to(:account, Account)
+
+    has_many(:adjustments, Adjustment)
 
     timestamps(type: :utc_datetime_usec)
   end
