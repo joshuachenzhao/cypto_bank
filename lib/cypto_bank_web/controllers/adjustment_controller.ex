@@ -15,12 +15,8 @@ defmodule CyptoBankWeb.AdjustmentController do
   end
 
   def create(conn, %{
-        "adjustment" =>
-          %{
-            "amount" => _amount,
-            "original_ledger_id" => _original_ledger_id,
-            "account_id" => account_id
-          } = adjustment_params
+        "account_id" => account_id,
+        "adjustment" => adjustment_params
       }) do
     with {:ok, _account} <- account_ownership_check(conn, account_id),
          {:ok, %Adjustment{} = adjustment} <- Adjustments.create_adjustment(adjustment_params) do
@@ -31,25 +27,18 @@ defmodule CyptoBankWeb.AdjustmentController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    adjustment = Adjustments.get_adjustment!(id)
-    render(conn, "show.json", adjustment: adjustment)
-  end
-
-  def update(conn, %{"id" => id, "adjustment" => adjustment_params}) do
-    adjustment = Adjustments.get_adjustment!(id)
-
-    with {:ok, %Adjustment{} = adjustment} <-
-           Adjustments.update_adjustment(adjustment, adjustment_params) do
+  def show(conn, %{"adjustment_id" => id}) do
+    with {:ok, _user} <- verify_admin_access(conn) do
+      adjustment = Adjustments.get_adjustment!(id)
       render(conn, "show.json", adjustment: adjustment)
     end
   end
 
-  def delete(conn, %{"id" => id}) do
-    adjustment = Adjustments.get_adjustment!(id)
-
-    with {:ok, %Adjustment{}} <- Adjustments.delete_adjustment(adjustment) do
-      send_resp(conn, :no_content, "")
+  def approve(conn, %{"adjustment_id" => id}) do
+    with {:ok, _user} <- verify_admin_access(conn),
+         {:ok, %{close_adjustment_step: adjustment}} <-
+           Adjustments.approve_adjustment(id) do
+      render(conn, "show.json", adjustment: adjustment)
     end
   end
 end

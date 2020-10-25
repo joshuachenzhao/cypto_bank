@@ -39,10 +39,10 @@ defmodule CyptoBank.Adjustments do
   @doc """
   Approve an adjustment
   """
-  def approve_adjustment(adjustment_id, account_id) do
+  def approve_adjustment(adjustment_id) do
     Multi.new()
     |> Multi.run(:retrieve_adjustment_step, retrieve_adjustment(adjustment_id))
-    |> Multi.run(:retrieve_account_step, retrieve_account(account_id))
+    |> Multi.run(:retrieve_account_step, retrieve_account())
     |> Multi.run(:retrieve_ledger_step, retrieve_ledger())
     |> Multi.run(:verify_ledger_type_step, verify_ledger_type())
     |> Multi.run(:verify_adjustment_amount_step, verify_adjustment_amount())
@@ -54,15 +54,20 @@ defmodule CyptoBank.Adjustments do
 
   defp retrieve_adjustment(adjustment_id) do
     fn repo, _ ->
-      case from(adjustment in Adjustment, where: adjustment.id == ^adjustment_id) |> repo.one() do
+      case from(
+             adjustment in Adjustment,
+             where: adjustment.id == ^adjustment_id,
+             preload: [:original_ledger]
+           )
+           |> repo.one() do
         nil -> {:error, :adjustment_not_found}
-        adjustment -> {:ok, {adjustment}}
+        adjustment -> {:ok, {adjustment, adjustment.original_ledger.account_id}}
       end
     end
   end
 
-  defp retrieve_account(account_id) do
-    fn repo, %{retrieve_adjustment_step: {adjustment}} ->
+  defp retrieve_account() do
+    fn repo, %{retrieve_adjustment_step: {adjustment, account_id}} ->
       case from(acc in Account, where: acc.id == ^account_id) |> repo.one() do
         nil -> {:error, :account_not_found}
         account -> {:ok, {account, adjustment}}
