@@ -7,18 +7,18 @@ defmodule CyptoBankWeb.UserControllerTest do
 
   @create_attrs %{
     email: "some email",
-    is_active: true,
+    is_admin: true,
     password: "some password"
   }
   @update_attrs %{
     email: "some updated email",
-    is_active: false,
+    is_admin: false,
     password: "some updated password"
   }
-  @invalid_attrs %{email: nil, is_active: nil, password: nil}
+  @invalid_attrs %{email: nil, is_admin: nil, password: nil}
   @current_user_attrs %{
     email: "some current user email",
-    is_active: true,
+    is_admin: true,
     password: "some current user password"
   }
 
@@ -45,7 +45,7 @@ defmodule CyptoBankWeb.UserControllerTest do
                %{
                  "id" => current_user.id,
                  "email" => current_user.email,
-                 "is_active" => current_user.is_active
+                 "is_admin" => current_user.is_admin
                }
              ]
     end
@@ -61,7 +61,7 @@ defmodule CyptoBankWeb.UserControllerTest do
       assert %{
                "id" => _id,
                "email" => "some email",
-               "is_active" => true
+               "is_admin" => false
              } = json_response(conn, 200)["data"]
     end
 
@@ -83,7 +83,7 @@ defmodule CyptoBankWeb.UserControllerTest do
       assert %{
                "id" => _id,
                "email" => "some updated email",
-               "is_active" => false
+               "is_admin" => false
              } = json_response(conn, 200)["data"]
     end
 

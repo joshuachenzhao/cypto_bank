@@ -10,7 +10,7 @@ defmodule CyptoBankWeb.AccountControllerTest do
   @invalid_attrs %{}
   @current_user_attrs %{
     email: "some current user email",
-    is_active: true,
+    is_admin: true,
     password: "some current user password"
   }
 

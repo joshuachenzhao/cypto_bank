@@ -8,13 +8,13 @@ defmodule CyptoBank.Accounts.User do
   @foreign_key_type :binary_id
   @required_attrs ~w(
       email
-      is_active
+      is_admin
       password
     )a
 
   schema "users" do
     field :email, :string
-    field :is_active, :boolean, default: true
+    field :is_admin, :boolean, default: false
     field :password, :string, virtual: true
     field :password_hash, :string
 

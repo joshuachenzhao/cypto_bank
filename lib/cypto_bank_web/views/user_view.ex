@@ -18,7 +18,7 @@ defmodule CyptoBankWeb.UserView do
     %{
       id: user.id,
       email: user.email,
-      is_active: user.is_active,
+      is_admin: user.is_admin,
       inserted_at: user.inserted_at,
       updated_at: user.updated_at
     }
