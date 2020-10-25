@@ -1,6 +1,6 @@
 defmodule CyptoBankWeb.UserController do
   use CyptoBankWeb, :controller
-  import CyptoBankWeb.Helpers, only: [fetch_current_user: 1]
+  import CyptoBankWeb.Helpers, only: [fetch_current_user: 1, admin_check: 1]
 
   alias CyptoBank.Accounts
   alias CyptoBank.Accounts.User
@@ -9,8 +9,11 @@ defmodule CyptoBankWeb.UserController do
   action_fallback CyptoBankWeb.FallbackController
 
   def index(conn, _params) do
-    users = Accounts.list_users()
-    render(conn, "index.json", users: users)
+    with {:ok, _user} = result <- fetch_current_user(conn),
+         {:ok, _user} <- admin_check(result) do
+      users = Accounts.list_users()
+      render(conn, "index.json", users: users)
+    end
   end
 
   def create(conn, %{"user" => user_params}) do

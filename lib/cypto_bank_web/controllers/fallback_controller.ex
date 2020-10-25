@@ -13,13 +13,19 @@ defmodule CyptoBankWeb.FallbackController do
     |> render(CyptoBankWeb.ErrorView, :"404")
   end
 
+  def call(conn, {:error, :unauthorized}) do
+    conn
+    |> put_status(:unauthorized)
+    |> render(CyptoBankWeb.ErrorView, :"401")
+  end
+
   def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
     conn
     |> put_status(:unprocessable_entity)
     |> render(CyptoBankWeb.ChangesetView, "error.json", changeset: changeset)
   end
 
-  def call(conn, {:error, message}) when is_bitstring(message) do
+  def call(conn, {:error, message}) when is_bitstring(message) or is_atom(message) do
     conn
     |> put_status(:unprocessable_entity)
     |> json(%{"error" => message})

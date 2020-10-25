@@ -2,6 +2,7 @@ defmodule CyptoBankWeb.Helpers do
   import Plug.Conn
 
   alias CyptoBank.Accounts
+  alias CyptoBank.Accounts.User
 
   def fetch_current_user_id(conn) do
     conn
@@ -27,4 +28,8 @@ defmodule CyptoBankWeb.Helpers do
     |> get_current_user_id
     |> Accounts.get_user()
   end
+
+  def admin_check({:ok, %User{is_admin: true} = user}), do: {:ok, user}
+  def admin_check({:ok, %User{}}), do: {:error, :no_admin_access}
+  def admin_check({:error, error}), do: {:error, error}
 end

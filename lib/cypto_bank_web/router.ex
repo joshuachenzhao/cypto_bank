@@ -19,14 +19,8 @@ defmodule CyptoBankWeb.Router do
   scope "/api", CyptoBankWeb do
     pipe_through [:api, :api_auth]
 
-    # get("/current_user", UserController, :show_current_user) do
-    #   resources("/accounts", AccountController, only: [:index, :show]) do
-    #     resources("/transactions", TransactionController, only: [:index, :show])
-    #   end
-    # end
-
-    resources "/users", UserController, except: [:create, :new, :edit]
-
+    get("/users", UserController, :index)
+    get("/admin_user", UserController, :admin_user)
     get("/current_user", UserController, :show_current_user)
     get("/current_user/accounts", AccountController, :index)
     get("/current_user/accounts/:account_id", AccountController, :show)
