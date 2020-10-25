@@ -3,6 +3,7 @@ defmodule CyptoBank.Accounts.User do
   import Ecto.Changeset
 
   alias CyptoBank.Accounts.Account
+  alias CyptoBank.Adjustments.Adjustment
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
