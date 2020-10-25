@@ -20,7 +20,6 @@ defmodule CyptoBankWeb.Router do
     pipe_through [:api, :api_auth]
 
     get("/users", UserController, :index)
-    get("/admin_user", UserController, :admin_user)
     get("/current_user", UserController, :show_current_user)
     get("/current_user/accounts", AccountController, :index)
     get("/current_user/accounts/:account_id", AccountController, :show)

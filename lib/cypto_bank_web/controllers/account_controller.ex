@@ -1,6 +1,6 @@
 defmodule CyptoBankWeb.AccountController do
   use CyptoBankWeb, :controller
-  import CyptoBankWeb.Helpers, only: [fetch_current_user_id: 1]
+  import CyptoBankWeb.Helpers, only: [fetch_current_user_id: 1, fetch_current_user: 1]
 
   alias CyptoBank.Accounts
   alias CyptoBank.Accounts.Account
@@ -8,8 +8,8 @@ defmodule CyptoBankWeb.AccountController do
   action_fallback CyptoBankWeb.FallbackController
 
   def index(conn, _params) do
-    with {:ok, user_id} <- fetch_current_user_id(conn) do
-      accounts = Accounts.list_accounts_for_user(user_id)
+    with {:ok, user} <- fetch_current_user(conn) do
+      accounts = Accounts.list_accounts_for_user(user)
       render(conn, "index.json", accounts: accounts)
     end
   end
@@ -25,8 +25,8 @@ defmodule CyptoBankWeb.AccountController do
   end
 
   def show(conn, %{"account_id" => account_id}) do
-    with {:ok, user_id} <- fetch_current_user_id(conn),
-         {:ok, account} <- Accounts.get_account_for_user!(user_id, account_id) do
+    with {:ok, user} <- fetch_current_user(conn),
+         {:ok, account} <- Accounts.fetch_account_for_user(user, account_id) do
       render(conn, "show.json", account: account)
     end
   end

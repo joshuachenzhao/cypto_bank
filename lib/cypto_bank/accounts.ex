@@ -21,15 +21,25 @@ defmodule CyptoBank.Accounts do
     |> Repo.insert()
   end
 
-  def list_accounts_for_user(user_id) do
+  @doc """
+  index accounts for users
+  admin users can see all account
+  client users can only see account they own
+  """
+  def list_accounts_for_user(%User{is_admin: true}), do: Account |> Repo.all()
+
+  def list_accounts_for_user(%User{id: user_id}) do
     Account
     |> query_join(:user, :id, user_id)
     |> Repo.all()
   end
 
-  def get_account_for_user!(user_id, account_id) do
+  def fetch_account_for_user(%User{is_admin: true}, account_id),
+    do: Account |> Repo.fetch(account_id)
+
+  def fetch_account_for_user(user, account_id) do
     Account
-    |> query_join(:user, :id, user_id)
+    |> query_join(:user, :id, user.id)
     |> Repo.fetch(account_id)
   end
 

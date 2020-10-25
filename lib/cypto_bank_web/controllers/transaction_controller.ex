@@ -1,6 +1,6 @@
 defmodule CyptoBankWeb.TransactionController do
   use CyptoBankWeb, :controller
-  import CyptoBankWeb.Helpers, only: [fetch_current_user_id: 1]
+  import CyptoBankWeb.Helpers, only: [fetch_current_user: 1]
 
   alias CyptoBank.Accounts
   alias CyptoBank.Transactions
@@ -95,8 +95,8 @@ defmodule CyptoBankWeb.TransactionController do
   end
 
   defp user_account_sercurity_check(conn, account_id) do
-    with {:ok, user_id} <- fetch_current_user_id(conn) do
-      Accounts.get_account_for_user!(user_id, account_id)
+    with {:ok, user} <- fetch_current_user(conn) do
+      Accounts.fetch_account_for_user(user, account_id)
     end
   end
 
