@@ -47,10 +47,6 @@ defmodule CyptoBank.Adjustments do
     |> Repo.insert()
   end
 
-  # DOING
-  # TODO
-  # set the admin_id correct
-  # auto decline if :no_sufficient_balance
   @doc """
   Approve an adjustment
   """

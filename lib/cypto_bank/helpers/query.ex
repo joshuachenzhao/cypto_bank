@@ -6,11 +6,6 @@ defmodule CyptoBank.Helpers.Query do
   @doc """
   preloads fields
   """
-  # TODO cleanup current borrowed from previous project
-  # def preloads(Baby), do: [postcode_council: preloads(PostcodeCouncil)]
-  # def preloads(BabyTask), do: [:task, baby: preloads(Baby)]
-  # def preloads(Carer), do: [:user, baby: :carers]
-  # def preloads(PostcodeCouncil), do: [:council, postcode: :state]
   def preloads(Account), do: [:user]
 
   @doc """
