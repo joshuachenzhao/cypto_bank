@@ -3,6 +3,8 @@ defmodule CyptoBank.Adjustments.Adjustment do
   import Ecto.Changeset
   import EctoEnum, only: [defenum: 3]
 
+  alias CyptoBank.Transactions.Ledger
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
 
@@ -31,8 +33,9 @@ defmodule CyptoBank.Adjustments.Adjustment do
     field :memo, :string, null: false
     field :status, AdjustmentStatus, null: false, default: :pending
     field :admin_id, :binary_id
-    field :original_ledger_id, :binary_id, null: false
-    field :adjust_ledger_id, :binary_id
+
+    belongs_to :original_ledger, Ledger, foreign_key: :original_ledger_id
+    belongs_to :adjust_ledger, Ledger, foreign_key: :adjust_ledger_id
 
     timestamps(type: :utc_datetime_usec)
   end
