@@ -45,7 +45,8 @@ defmodule CyptoBank.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:bcrypt_elixir, "~> 2.0"},
       {:corsica, "~> 1.1"},
-      {:ecto_enum, "~> 1.4"}
+      {:ecto_enum, "~> 1.4"},
+      {:ex_machina, "~> 2.4"}
     ]
   end
 
