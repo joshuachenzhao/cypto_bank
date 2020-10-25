@@ -55,17 +55,15 @@ defmodule CyptoBank.Transactions.Ledger do
     |> foreign_key_constraint(:account_id)
   end
 
-  @doc """
-  absolute amount to avoid negative amount input, except for adjustment type, which in the future, should seperate into dr and cr adjustment
-  """
-  def sanitize_amount(%Ecto.Changeset{valid?: true, changes: %{type: :adjustment}} = changeset),
+  # absolute amount to avoid negative amount input, except for adjustment type, which in the future, should seperate into dr and cr adjustment
+  defp sanitize_amount(%Ecto.Changeset{valid?: true, changes: %{type: :adjustment}} = changeset),
     do: changeset
 
-  def sanitize_amount(%Ecto.Changeset{valid?: true, changes: %{amount: amount}} = changeset) do
+  defp sanitize_amount(%Ecto.Changeset{valid?: true, changes: %{amount: amount}} = changeset) do
     put_change(changeset, :amount, abs(amount))
   end
 
-  def sanitize_amount(changeset), do: changeset
+  defp sanitize_amount(changeset), do: changeset
 
   defp check_credit_limit(
          %Ecto.Changeset{

@@ -11,30 +11,6 @@ defmodule CyptoBank.Transactions do
   alias CyptoBank.Accounts.Account
   alias CyptoBank.Transactions.Ledger
 
-  def list_ledgers do
-    Repo.all(Ledger)
-  end
-
-  def list_ledgers_for_account(account_id) do
-    Ledger
-    |> query_join(:account, :id, account_id)
-    |> Repo.all()
-  end
-
-  def get_ledger!(id), do: Repo.get!(Ledger, id)
-
-  def get_ledger_for_account!(transaction_id, account_id) do
-    Ledger
-    |> query_join(:account, :id, account_id)
-    |> Repo.get!(transaction_id)
-  end
-
-  def create_ledger(attrs \\ %{}) do
-    %Ledger{}
-    |> Ledger.changeset(attrs)
-    |> Repo.insert()
-  end
-
   @doc """
   Deposite money of given amount to account with account_id
   """
@@ -70,6 +46,30 @@ defmodule CyptoBank.Transactions do
     |> Multi.run(:create_receive_ledger_step, &create_receive_ledger/2)
     |> Multi.run(:add_to_receive_acc_step, &add_to_receive_acc/2)
     |> Repo.transaction()
+  end
+
+  def list_ledgers do
+    Repo.all(Ledger)
+  end
+
+  def list_ledgers_for_account(account_id) do
+    Ledger
+    |> query_join(:account, :id, account_id)
+    |> Repo.all()
+  end
+
+  def get_ledger!(id), do: Repo.get!(Ledger, id)
+
+  def get_ledger_for_account!(transaction_id, account_id) do
+    Ledger
+    |> query_join(:account, :id, account_id)
+    |> Repo.get!(transaction_id)
+  end
+
+  def create_ledger(attrs \\ %{}) do
+    %Ledger{}
+    |> Ledger.changeset(attrs)
+    |> Repo.insert()
   end
 
   defp retrieve_account(amount, account_id) do
