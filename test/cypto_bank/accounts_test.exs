@@ -6,7 +6,7 @@ defmodule CyptoBank.AccountsTest do
   describe "users" do
     alias CyptoBank.Accounts.User
 
-    @valid_attrs %{email: "some email", is_admin: true, password: "some password"}
+    @valid_attrs %{email: "some email", is_admin: false, password: "some password"}
     @update_attrs %{
       email: "some updated email",
       is_admin: true,
