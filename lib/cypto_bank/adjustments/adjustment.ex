@@ -25,15 +25,15 @@ defmodule CyptoBank.Adjustments.Adjustment do
   defenum(AdjustmentStatus, :adjustment_status, [
     :pending,
     :success,
-    :denied
+    :declined
   ])
 
   schema "adjustments" do
     field :amount, :integer, null: false
     field :memo, :string, null: false
     field :status, AdjustmentStatus, null: false, default: :pending
-    field :admin_id, :binary_id
 
+    belongs_to :user, User, foreign_key: :admin_id
     belongs_to :original_ledger, Ledger, foreign_key: :original_ledger_id
     belongs_to :adjust_ledger, Ledger, foreign_key: :adjust_ledger_id
 

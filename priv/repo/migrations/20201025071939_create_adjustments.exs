@@ -10,7 +10,7 @@ defmodule CyptoBank.Repo.Migrations.CreateAdjustments do
       add :amount, :integer, null: false
       add :status, :adjustment_status, null: false, default: "pending"
       add :memo, :string
-      add :admin_id, references(:accounts, on_delete: :nothing, type: :binary_id)
+      add :admin_id, references(:users, on_delete: :nothing, type: :binary_id)
 
       add :original_ledger_id, references(:ledgers, on_delete: :nothing, type: :binary_id),
         null: false

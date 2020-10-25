@@ -18,6 +18,7 @@ defmodule CyptoBank.Accounts.User do
     field :password, :string, virtual: true
     field :password_hash, :string
 
+    has_many(:adjustments, Adjustment, foreign_key: :admin_id)
     has_many(:accounts, Account)
 
     timestamps(type: :utc_datetime_usec)
