@@ -47,12 +47,6 @@ defmodule CyptoBankWeb.Router do
     # Adjustment endpoints
     post("/user/accounts/:account_id/adjustments", AdjustmentController, :create)
 
-    post(
-      "/user/accounts/:account_id/adjustments/:adjustment_id",
-      AdjustmentController,
-      :show
-    )
-
     # Admin/Operation endpoints
     get("/admin/users", UserController, :index)
     get("/admin/users/:user_id", UserController, :show)

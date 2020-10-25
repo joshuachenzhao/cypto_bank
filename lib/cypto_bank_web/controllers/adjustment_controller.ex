@@ -61,11 +61,10 @@ defmodule CyptoBankWeb.AdjustmentController do
     end
   end
 
-  # TODO
   def decline(conn, %{"adjustment_id" => id}) do
     with {:ok, admin} <- verify_admin_access(conn),
          {:ok, %{close_adjustment_step: adjustment}} <-
-           Adjustments.approve_adjustment(id, admin.id) do
+           Adjustments.decline_adjustment(id, admin.id) do
       render(conn, "show.json", adjustment: adjustment)
     end
   end
