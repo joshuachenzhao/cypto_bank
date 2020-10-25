@@ -8,7 +8,7 @@ defmodule CyptoBank.Repo.Migrations.CreateAdjustments do
     create table(:adjustments, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :amount, :integer, null: false
-      add :status, :adjustment_status, null: false
+      add :status, :adjustment_status, null: false, default: "pending"
       add :memo, :string
       add :admin_id, references(:accounts, on_delete: :nothing, type: :binary_id)
 

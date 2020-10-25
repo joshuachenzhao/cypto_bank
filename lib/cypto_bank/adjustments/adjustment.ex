@@ -29,7 +29,7 @@ defmodule CyptoBank.Adjustments.Adjustment do
   schema "adjustments" do
     field :amount, :integer, null: false
     field :memo, :string, null: false
-    field :status, AdjustmentStatus, null: false
+    field :status, AdjustmentStatus, null: false, default: :pending
     field :admin_id, :binary_id
     field :original_ledger_id, :binary_id, null: false
     field :adjust_ledger_id, :binary_id
@@ -42,6 +42,14 @@ defmodule CyptoBank.Adjustments.Adjustment do
     adjustment
     |> cast(attrs, @permitted_attrs)
     |> validate_required(@required_attrs)
+    |> EctoEnum.validate_enum(:status)
+  end
+
+  @doc false
+  def update_changeset(adjustment, attrs) do
+    adjustment
+    |> cast(attrs, [:status, :admin_id, :adjust_ledger_id])
+    |> validate_required([:status, :admin_id])
     |> EctoEnum.validate_enum(:status)
   end
 end
