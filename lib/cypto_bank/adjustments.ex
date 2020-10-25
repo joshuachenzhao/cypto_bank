@@ -4,6 +4,7 @@ defmodule CyptoBank.Adjustments do
   """
 
   import Ecto.Query, warn: false
+  import CyptoBank.Helpers.Query
   alias Ecto.Multi
 
   alias CyptoBank.Repo
@@ -16,6 +17,12 @@ defmodule CyptoBank.Adjustments do
     Repo.all(Adjustment)
   end
 
+  def list_adjustments_for_user(account_id) do
+    Adjustment
+    |> query_join(:account, :id, account_id)
+    |> Repo.all()
+  end
+
   def get_adjustment!(id), do: Repo.get!(Adjustment, id)
 
   def create_adjustment(attrs \\ %{}) do
@@ -25,14 +32,18 @@ defmodule CyptoBank.Adjustments do
   end
 
   # DOING
+  # TODO
+  # set the admin_id correct
+  # add view
+  # auto decline if :no_sufficient_balance
   @doc """
   Approve an adjustment
   """
-  def approve_adjustment(adjustment_id, amount, account_id, original_ledger_id) do
+  def approve_adjustment(adjustment_id, account_id) do
     Multi.new()
-    |> Multi.run(:retrieve_account_step, retrieve_account(amount, account_id))
-    |> Multi.run(:retrieve_ledger_step, retrieve_ledger(original_ledger_id))
     |> Multi.run(:retrieve_adjustment_step, retrieve_adjustment(adjustment_id))
+    |> Multi.run(:retrieve_account_step, retrieve_account(account_id))
+    |> Multi.run(:retrieve_ledger_step, retrieve_ledger())
     |> Multi.run(:verify_ledger_type_step, verify_ledger_type())
     |> Multi.run(:verify_adjustment_amount_step, verify_adjustment_amount())
     |> Multi.run(:create_adjustment_ledger_step, &create_adjustment_ledger/2)
@@ -41,35 +52,36 @@ defmodule CyptoBank.Adjustments do
     |> Repo.transaction()
   end
 
-  defp retrieve_account(amount, account_id) do
-    fn repo, _ ->
-      case from(acc in Account, where: acc.id == ^account_id) |> repo.one() do
-        nil -> {:error, :account_not_found}
-        account -> {:ok, {amount, account}}
-      end
-    end
-  end
-
-  defp retrieve_ledger(ledger_id) do
-    fn repo, %{retrieve_account_step: {amount, account}} ->
-      case from(ledger in Ledger, where: ledger.id == ^ledger_id) |> repo.one() do
-        nil -> {:error, :original_ledger_not_found}
-        ledger -> {:ok, {amount, account, ledger}}
-      end
-    end
-  end
-
   defp retrieve_adjustment(adjustment_id) do
-    fn repo, %{retrieve_ledger_step: {amount, account, ledger}} ->
+    fn repo, _ ->
       case from(adjustment in Adjustment, where: adjustment.id == ^adjustment_id) |> repo.one() do
         nil -> {:error, :adjustment_not_found}
-        adjustment -> {:ok, {amount, account, adjustment, ledger}}
+        adjustment -> {:ok, {adjustment}}
+      end
+    end
+  end
+
+  defp retrieve_account(account_id) do
+    fn repo, %{retrieve_adjustment_step: {adjustment}} ->
+      case from(acc in Account, where: acc.id == ^account_id) |> repo.one() do
+        nil -> {:error, :account_not_found}
+        account -> {:ok, {account, adjustment}}
+      end
+    end
+  end
+
+  defp retrieve_ledger() do
+    fn repo, %{retrieve_account_step: {account, adjustment}} ->
+      case from(ledger in Ledger, where: ledger.id == ^adjustment.original_ledger_id)
+           |> repo.one() do
+        nil -> {:error, :original_ledger_not_found}
+        ledger -> {:ok, {account, adjustment, ledger}}
       end
     end
   end
 
   defp verify_ledger_type() do
-    fn _repo, %{retrieve_ledger_step: {_amount, _account, ledger}} ->
+    fn _repo, %{retrieve_ledger_step: {_account, _adjustment, ledger}} ->
       if ledger.type in [:deposit, :withdrawal],
         do: {:ok, {ledger}},
         else: {:error, :unspport_ledger_type_for_adjustment}
@@ -77,8 +89,8 @@ defmodule CyptoBank.Adjustments do
   end
 
   defp verify_adjustment_amount() do
-    fn _repo, %{retrieve_adjustment_step: {amount, account, adjustment, ledger}} ->
-      formated_adjustment_amount = format_double_entry_amount(ledger.type, amount)
+    fn _repo, %{retrieve_ledger_step: {account, adjustment, ledger}} ->
+      formated_adjustment_amount = format_double_entry_amount(ledger.type, adjustment.amount)
       adjustment_ledger_amount = formated_adjustment_amount - ledger.amount
 
       if formated_adjustment_amount + account.balance - ledger.amount < 0,
