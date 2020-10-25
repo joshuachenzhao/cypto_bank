@@ -54,7 +54,7 @@ defmodule CyptoBank.Adjustments do
   @doc """
   Approve an adjustment
   """
-  def approve_adjustment(adjustment_id) do
+  def approve_adjustment(adjustment_id, admin_id) do
     Multi.new()
     |> Multi.run(:retrieve_adjustment_step, retrieve_adjustment(adjustment_id))
     |> Multi.run(:retrieve_account_step, retrieve_account())
@@ -63,19 +63,19 @@ defmodule CyptoBank.Adjustments do
     |> Multi.run(:verify_adjustment_amount_step, verify_adjustment_amount())
     |> Multi.run(:create_adjustment_ledger_step, &create_adjustment_ledger/2)
     |> Multi.run(:adjust_account_balance_step, &adjust_account_balance/2)
-    |> Multi.run(:close_adjustment_step, &close_adjustment/2)
+    |> Multi.run(:close_adjustment_step, close_adjustment(admin_id))
     |> Repo.transaction()
   end
 
-  # def decline_adjustment(adjustment_id) do
-  #   adjustment_id
-  #   |> get_adjustment!()
-  #   |> Adjustment.update_changeset(%{
-  #     status: :denied,
-  #     admin_id: ueer.id
-  #   })
-  #   |> repo.update()
-  # end
+  def decline_adjustment(adjustment_id, admin_id) do
+    adjustment_id
+    |> get_adjustment!()
+    |> Adjustment.update_changeset(%{
+      status: :denied,
+      admin_id: admin_id
+    })
+    |> Repo.update()
+  end
 
   defp retrieve_adjustment(adjustment_id) do
     fn repo, _ ->
@@ -157,16 +157,19 @@ defmodule CyptoBank.Adjustments do
     |> repo.update()
   end
 
-  defp close_adjustment(repo, %{
-         create_adjustment_ledger_step: {_amount, account, adjustment, _ledger, patched_ledger}
-       }) do
-    adjustment
-    |> Adjustment.update_changeset(%{
-      status: :success,
-      adjust_ledger_id: patched_ledger.id,
-      admin_id: account.id
-    })
-    |> repo.update()
+  defp close_adjustment(admin_id) do
+    fn repo,
+       %{
+         create_adjustment_ledger_step: {_amount, _account, adjustment, _ledger, patched_ledger}
+       } ->
+      adjustment
+      |> Adjustment.update_changeset(%{
+        status: :success,
+        adjust_ledger_id: patched_ledger.id,
+        admin_id: admin_id
+      })
+      |> repo.update()
+    end
   end
 
   def reject_adjustment() do
