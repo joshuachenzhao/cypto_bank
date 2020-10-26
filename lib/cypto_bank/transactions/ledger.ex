@@ -1,4 +1,7 @@
 defmodule CyptoBank.Transactions.Ledger do
+  @moduledoc """
+  Ledger schema
+  """
   use Ecto.Schema
   import Ecto.Changeset
   import EctoEnum, only: [defenum: 3]
@@ -72,9 +75,10 @@ defmodule CyptoBank.Transactions.Ledger do
          } = changeset
        )
        when type == :withdrawal or type == :transfer_pay do
-    with {:ok, _amount} <- do_check_withdraw_limit(amount, account_id) do
-      changeset
-    else
+    case do_check_withdraw_limit(amount, account_id) do
+      {:ok, _amount} ->
+        changeset
+
       {:error, error} ->
         add_error(changeset, :error, error)
     end

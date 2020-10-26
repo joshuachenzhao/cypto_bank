@@ -45,7 +45,7 @@ defmodule CyptoBank.Accounts do
 
   def get_account!(id), do: Repo.get!(Account, id)
 
-  # TODO need to break the context into user and account, future me
+  # NOTE need to break the context into user and account, future me
 
   def list_users do
     Repo.all(User)

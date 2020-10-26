@@ -78,12 +78,14 @@ defmodule CyptoBank.Adjustments.MultiSteps.Approve do
   def create_adjustment_ledger(_repo, %{
         verify_adjustment_amount_step: {amount, account, adjustment, ledger}
       }) do
-    with {:ok, %Ledger{} = adjust_ledger} <-
-           %{amount: amount, account_id: account.id, type: :adjustment}
-           |> Transactions.create_ledger() do
-      {:ok, {amount, account, adjustment, ledger, adjust_ledger}}
-    else
-      error -> error
+    ledger_params = %{amount: amount, account_id: account.id, type: :adjustment}
+
+    case ledger_params |> Transactions.create_ledger() do
+      {:ok, %Ledger{} = adjust_ledger} ->
+        {:ok, {amount, account, adjustment, ledger, adjust_ledger}}
+
+      error ->
+        error
     end
   end
 

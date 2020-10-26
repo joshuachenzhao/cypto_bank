@@ -1,4 +1,7 @@
 defmodule CyptoBank.Adjustments.Adjustment do
+  @moduledoc """
+  Adjustment schema
+  """
   use Ecto.Schema
   import Ecto.Changeset
   import EctoEnum, only: [defenum: 3]

@@ -1,4 +1,7 @@
 defmodule CyptoBank.Helpers.Query do
+  @moduledoc """
+  Query related helper functions module
+  """
   import Ecto.Query, warn: false
 
   alias CyptoBank.Accounts.Account

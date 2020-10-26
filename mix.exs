@@ -47,7 +47,8 @@ defmodule CyptoBank.MixProject do
       {:corsica, "~> 1.1"},
       {:ecto_enum, "~> 1.4"},
       {:ex_machina, "~> 2.4"},
-      {:ecto_psql_extras, "~> 0.2"}
+      {:ecto_psql_extras, "~> 0.2"},
+      {:credo, "~> 1.5.0-rc.2", only: [:dev, :test], runtime: false}
     ]
   end
 

@@ -1,4 +1,7 @@
 defmodule CyptoBank.Factory do
+  @moduledoc """
+  ExMachina factory module
+  """
   # with Ecto
   use ExMachina.Ecto, repo: CyptoBank.Repo
 

@@ -1,4 +1,7 @@
 defmodule CyptoBankWeb.Telemetry do
+  @moduledoc """
+  Livedash Ecto stats auto generated module
+  """
   use Supervisor
   import Telemetry.Metrics
 
