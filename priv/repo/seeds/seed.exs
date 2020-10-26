@@ -32,9 +32,9 @@ defmodule CyptoBank.Seeds.Seed do
     with {:ok, %{user_id: _user_id_1, account_id: account_id_1}} <- create_account(user_params_1),
          {:ok, %{user_id: _user_id_2, account_id: account_id_2}} <- create_account(user_params_2),
          {:ok, %{create_deposit_ledger_step: dep_tran_1}} <-
-           Transactions.deposite(Enum.random(30..100) * 10000, account_id_1),
+           Transactions.deposit(Enum.random(30..100) * 10000, account_id_1),
          {:ok, %{create_deposit_ledger_step: _dep_tran_2}} <-
-           Transactions.deposite(Enum.random(30..100) * 10000, account_id_2),
+           Transactions.deposit(Enum.random(30..100) * 10000, account_id_2),
          {:ok, %{create_withdrawal_ledger_step: _with_tran_1}} <-
            Transactions.withdrawal(Enum.random(1..50) * 1000, account_id_1),
          {:ok, %{create_withdrawal_ledger_step: with_tran_2}} <-

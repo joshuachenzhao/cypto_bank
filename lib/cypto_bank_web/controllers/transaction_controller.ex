@@ -41,7 +41,7 @@ defmodule CyptoBankWeb.TransactionController do
       when is_integer(amount) and amount > 0 do
     with {:ok, _account} <- verify_account_access(conn, account_id),
          {:ok, %{create_deposit_ledger_step: transaction}} <-
-           Transactions.deposite(amount, account_id) do
+           Transactions.deposit(amount, account_id) do
       conn |> do_render("show.json", transaction: transaction)
     end
   end

@@ -36,7 +36,7 @@ defmodule CyptoBank.TransactionsTest do
       account = insert(:account, balance: 0)
 
       assert {:ok, %{create_deposit_ledger_step: ledger}} =
-               Transactions.deposite(amount, account.id)
+               Transactions.deposit(amount, account.id)
 
       ledger = ledger |> Repo.preload(:account)
 
