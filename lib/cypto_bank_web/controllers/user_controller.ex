@@ -60,7 +60,9 @@ defmodule CyptoBankWeb.UserController do
   end
 
   @doc """
-  Sign in a user, with session renew, in this code challenge user authentication uses session based strategy for the sake of simplicity, for more time, JWT/OAuth or other token based strategies may be more suitable
+  Sign in a user, with session renew, in this code challenge user authentication uses
+  session based strategy for the sake of simplicity, for more time, JWT/OAuth or other
+  token based strategies may be more suitable
   """
   def sign_in(conn, %{"email" => email, "password" => password}) do
     case Accounts.authenticate_user(email, password) do

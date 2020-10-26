@@ -6,16 +6,16 @@ defmodule CyptoBankWeb.FallbackController do
   """
   use CyptoBankWeb, :controller
 
-  def call(conn, {:error, :not_found}) do
-    conn
-    |> put_status(:not_found)
-    |> render(CyptoBankWeb.ErrorView, :"404")
-  end
-
   def call(conn, {:error, :unauthorized}) do
     conn
     |> put_status(:unauthorized)
     |> render(CyptoBankWeb.ErrorView, :"401")
+  end
+
+  def call(conn, {:error, :not_found}) do
+    conn
+    |> put_status(:not_found)
+    |> render(CyptoBankWeb.ErrorView, :"404")
   end
 
   def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
@@ -24,21 +24,26 @@ defmodule CyptoBankWeb.FallbackController do
     |> render(CyptoBankWeb.ChangesetView, "error.json", changeset: changeset)
   end
 
-  def call(conn, {:error, message}) when is_bitstring(message) or is_atom(message) do
+  def call(conn, {:error, error_step, {error_type, error}, _}) do
     conn
     |> put_status(:unprocessable_entity)
-    |> json(%{"error" => message})
+    |> render(CyptoBankWeb.ErrorView, "error.json",
+      message: %{:error_step => error_step, :error_type => error_type, :error => error}
+    )
   end
 
-  def call(conn, {:error, error_step, {error_type, message}, _}) do
+  def call(conn, {:error, error_step, error, _}) do
     conn
     |> put_status(:unprocessable_entity)
-    |> json(%{"error" => %{"transaction_error" => %{error_step => %{error_type => message}}}})
+    # |> render(CyptoBankWeb.ErrorView, "error.json",
+    |> render(CyptoBankWeb.ErrorView, "error.json",
+      message: %{:error_step => error_step, :error => error}
+    )
   end
 
-  def call(conn, {:error, error_step, message, _}) do
+  def call(conn, {:error, error}) when is_bitstring(error) or is_atom(error) do
     conn
     |> put_status(:unprocessable_entity)
-    |> json(%{"error" => %{"transaction_error" => %{error_step => message}}})
+    |> render(CyptoBankWeb.ErrorView, "error.json", message: error)
   end
 end
