@@ -34,9 +34,6 @@ defmodule CyptoBank.AccountsTest do
     end
 
     test "authenticate_user/2 fails with wrong email or password" do
-      user = insert(:user)
-      user_no_password = insert(:user) |> user_no_password()
-
       assert {:error, "Wrong email or password"} = Accounts.authenticate_user("wrong email", "")
 
       assert {:error, "Wrong email or password"} =
@@ -58,16 +55,19 @@ defmodule CyptoBank.AccountsTest do
     test "list_accounts_for_user/1 list all acounts for admin" do
       admin = insert(:admin)
       accounts = insert_list(5, :account)
+      account_ids = accounts |> get_fields(:id)
 
-      assert accounts = Accounts.list_accounts_for_user(admin)
+      # NOTE compares id intead struct, Factory structs are preloaded, can't
+      # bother for just now
+      assert account_ids == Accounts.list_accounts_for_user(admin) |> get_fields(:id)
     end
 
     test "list_accounts_for_user/1 list all acounts belongs to a user" do
       user = insert(:user)
       owned_accounts = insert_list(5, :account, user: user)
-      no_owned_accounts = insert_list(5, :account)
+      owned_account_ids = owned_accounts |> get_fields(:id)
 
-      assert owned_accounts_accounts = Accounts.list_accounts_for_user(user)
+      assert owned_account_ids == Accounts.list_accounts_for_user(user) |> get_fields(:id)
       assert 5 == Accounts.list_accounts_for_user(user) |> length
     end
 
@@ -76,14 +76,16 @@ defmodule CyptoBank.AccountsTest do
       user = insert(:user)
       account = insert(:account, user: user)
 
-      assert {:ok, accounts} = Accounts.fetch_account_for_user(admin, account.id)
+      assert {:ok, return_account} = Accounts.fetch_account_for_user(admin, account.id)
+      assert account.id == return_account.id
     end
 
     test "fetch_account_for_user/2 fetch an acount belongs to a user with given id" do
       user = insert(:user)
       account = insert(:account, user: user)
 
-      assert {:ok, accounts} = Accounts.fetch_account_for_user(user, account.id)
+      assert {:ok, return_account} = Accounts.fetch_account_for_user(user, account.id)
+      assert account.id == return_account.id
     end
 
     test "fetch_account_for_user/2 does not fetch an acount with given id that does not belong to a user" do
@@ -93,5 +95,9 @@ defmodule CyptoBank.AccountsTest do
 
       assert {:error, :not_found} = Accounts.fetch_account_for_user(user, account.id)
     end
+  end
+
+  defp get_fields(maps, field) do
+    maps |> Enum.map(&Map.get(&1, field))
   end
 end
