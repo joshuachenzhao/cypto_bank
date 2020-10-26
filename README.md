@@ -44,8 +44,6 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
     - most of time has been spend on achieving a robust banking system and
       features that required, unfortunately I don't have enough time left to
       write more tests, increase CyptoBank test coverage is my current task.
-    - second one, I will add more seeds to the project, giving the time limit, I
-      decide to spend the last part to documentation.
     - currently, user authentication is session based, with simple but secure user
       authentication method, using email and hashed password, with session
       renew. If with more time, I would prefer implement token based
