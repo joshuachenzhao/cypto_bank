@@ -52,24 +52,27 @@ defmodule CyptoBank.Transactions do
     Repo.all(Ledger)
   end
 
+  def get_ledger!(id), do: Repo.get!(Ledger, id)
+
+  def create_ledger(attrs \\ %{}) do
+    %Ledger{}
+    |> Ledger.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Index all ledgers belongs to account with id
+  """
   def list_ledgers_for_account(account_id) do
     Ledger
     |> query_join(:account, :id, account_id)
     |> Repo.all()
   end
 
-  def get_ledger!(id), do: Repo.get!(Ledger, id)
-
   def get_ledger_for_account!(transaction_id, account_id) do
     Ledger
     |> query_join(:account, :id, account_id)
     |> Repo.get!(transaction_id)
-  end
-
-  def create_ledger(attrs \\ %{}) do
-    %Ledger{}
-    |> Ledger.changeset(attrs)
-    |> Repo.insert()
   end
 
   defp retrieve_account(amount, account_id) do
@@ -112,6 +115,7 @@ defmodule CyptoBank.Transactions do
     end
   end
 
+  # TODO
   defp verify_balance() do
     fn _repo, %{retrieve_account_step: {amount, account}} ->
       if account.balance < amount,
