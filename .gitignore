@@ -27,4 +27,6 @@ cypto_bank-*.tar
 # this depending on your deployment strategy.
 /priv/static/
 
+
+.DS_Store
 .elixir_ls/
