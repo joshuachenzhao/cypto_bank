@@ -108,14 +108,14 @@ defmodule CyptoBank.Transactions do
 
   defp retrieve_accounts(send_acc_id, receive_acc_id) do
     fn repo, _ ->
-      case from(acc in Account, where: acc.id in [^send_acc_id, ^receive_acc_id]) |> repo.all() do
+      case from(acc in Account, where: acc.id in [^send_acc_id, ^receive_acc_id])
+           |> repo.all() do
         [send_acc, receive_acc] -> {:ok, {send_acc, receive_acc}}
         _ -> {:error, :account_not_found}
       end
     end
   end
 
-  # TODO
   defp verify_balance() do
     fn _repo, %{retrieve_account_step: {amount, account}} ->
       if account.balance < amount,
