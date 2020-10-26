@@ -6,16 +6,14 @@ defmodule CyptoBank.AdjustmentsTest do
   alias CyptoBank.Adjustments
 
   describe "adjustments" do
-    alias CyptoBank.Adjustments.Adjustment
-
     test "check_no_existing_adjustment/1 returns ok when ledger has not adjustment" do
       id = Ecto.UUID.generate()
-      assert {:ok, id} = Adjustments.check_no_existing_adjustment(id)
+      assert {:ok, _id} = Adjustments.check_no_existing_adjustment(id)
     end
 
     test "check_no_existing_adjustment/1 fails and returns error when ledger has adjustment" do
       ledger = insert(:ledger, type: :adjustment)
-      adjustment = insert(:adjustment, original_ledger: ledger)
+      insert(:adjustment, original_ledger: ledger)
 
       assert {:error, :adjustment_already_exist} =
                Adjustments.check_no_existing_adjustment(ledger.id)
@@ -42,10 +40,6 @@ defmodule CyptoBank.AdjustmentsTest do
                 adjust_account_balance_step: updated_account,
                 close_adjustment_step: updated_adjustment
               }} = Adjustments.approve_adjustment(adjustment.id, admin.id)
-
-      # adjustment_ledger |> IO.inspect(label: "foo--------------------------->")
-      # updated_account |> IO.inspect(label: "bar--------------------------->")
-      # updated_adjustment |> IO.inspect(label: "qua--------------------------->")
 
       assert adjustment_ledger.account_id == account.id
       assert adjustment_ledger.amount == adjustment_amount - original_amount
