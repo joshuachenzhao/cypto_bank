@@ -96,8 +96,4 @@ defmodule CyptoBank.AccountsTest do
       assert {:error, :not_found} = Accounts.fetch_account_for_user(user, account.id)
     end
   end
-
-  defp get_fields(maps, field) do
-    maps |> Enum.map(&Map.get(&1, field))
-  end
 end
