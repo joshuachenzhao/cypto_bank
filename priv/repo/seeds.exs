@@ -10,7 +10,18 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-IO.puts("Adding a couple of users...")
+IO.puts("Adding admins, clients with deposit, withdraw, transfer and adjustment......")
 
-CyptoBank.Accounts.create_user(%{email: "user1@email.com", password: "qwerty"})
-CyptoBank.Accounts.create_user(%{email: "user2@email.com", password: "asdfgh"})
+filenames = ~w(
+  seed
+)
+
+Enum.each(filenames, fn filename ->
+  Code.require_file("#{filename}.exs", "#{__DIR__}/seeds")
+end)
+
+alias CyptoBank.Seeds.Seed
+
+Seed.generate()
+
+IO.puts("----------------Seed finished----------------")
