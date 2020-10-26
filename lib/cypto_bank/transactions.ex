@@ -4,17 +4,17 @@ defmodule CyptoBank.Transactions do
   """
   import Ecto.Query, warn: false
   import CyptoBank.Helpers.Query
+  import CyptoBank.Transactions.MultiSteps.{DepositWithdrawal, Transfer}
+
   alias Ecto.Multi
 
   alias CyptoBank.Repo
-
-  alias CyptoBank.Accounts.Account
   alias CyptoBank.Transactions.Ledger
 
   @doc """
-  Deposite money of given amount to account with account_id
+  Deposit money of given amount to account with account_id
   """
-  def deposite(amount, account_id) do
+  def deposit(amount, account_id) do
     Multi.new()
     |> Multi.run(:retrieve_account_step, retrieve_account(amount, account_id))
     |> Multi.run(:create_deposit_ledger_step, &create_deposit_ledger/2)
@@ -48,18 +48,6 @@ defmodule CyptoBank.Transactions do
     |> Repo.transaction()
   end
 
-  def list_ledgers do
-    Repo.all(Ledger)
-  end
-
-  def get_ledger!(id), do: Repo.get!(Ledger, id)
-
-  def create_ledger(attrs \\ %{}) do
-    %Ledger{}
-    |> Ledger.changeset(attrs)
-    |> Repo.insert()
-  end
-
   @doc """
   Index all ledgers belongs to account with id
   """
@@ -75,86 +63,15 @@ defmodule CyptoBank.Transactions do
     |> Repo.get!(transaction_id)
   end
 
-  defp retrieve_account(amount, account_id) do
-    fn repo, _ ->
-      case from(acc in Account, where: acc.id == ^account_id) |> repo.one() do
-        nil -> {:error, :account_not_found}
-        account -> {:ok, {amount, account}}
-      end
-    end
+  def list_ledgers do
+    Repo.all(Ledger)
   end
 
-  defp create_deposit_ledger(_repo, %{retrieve_account_step: {amount, account}}) do
-    %{amount: amount, account_id: account.id, type: :deposit}
-    |> create_ledger()
-  end
+  def get_ledger!(id), do: Repo.get!(Ledger, id)
 
-  defp create_withdrawal_ledger(_repo, %{retrieve_account_step: {amount, account}}) do
-    %{amount: amount, account_id: account.id, type: :withdrawal}
-    |> create_ledger()
-  end
-
-  defp add_to_account(repo, %{retrieve_account_step: {amount, account}}) do
-    account
-    |> Account.changeset(%{balance: account.balance + amount})
-    |> repo.update()
-  end
-
-  defp substract_from_account(repo, %{retrieve_account_step: {amount, account}}) do
-    account
-    |> Account.changeset(%{balance: account.balance - amount})
-    |> repo.update()
-  end
-
-  defp retrieve_accounts(send_acc_id, receive_acc_id) do
-    fn repo, _ ->
-      case from(acc in Account, where: acc.id in [^send_acc_id, ^receive_acc_id])
-           |> repo.all() do
-        [send_acc, receive_acc] -> {:ok, {send_acc, receive_acc}}
-        _ -> {:error, :account_not_found}
-      end
-    end
-  end
-
-  defp verify_balance() do
-    fn _repo, %{retrieve_account_step: {amount, account}} ->
-      if account.balance < amount,
-        do: {:error, :balance_too_low},
-        else: {:ok, {amount, account}}
-    end
-  end
-
-  defp verify_balances(transfer_amount) do
-    fn _repo, %{retrieve_accounts_step: {send_acc, receive_acc}} ->
-      if send_acc.balance < transfer_amount,
-        do: {:error, :balance_too_low},
-        else: {:ok, {transfer_amount, send_acc, receive_acc}}
-    end
-  end
-
-  defp create_send_ledger(_repo, %{verify_balances_step: {transfer_amount, send_acc, _}}) do
-    %{amount: transfer_amount, account_id: send_acc.id, type: :transfer_pay}
-    |> create_ledger()
-  end
-
-  defp subtract_from_send_acc(repo, %{verify_balances_step: {verified_amount, send_acc, _}}) do
-    send_acc
-    |> Account.changeset(%{balance: send_acc.balance - verified_amount})
-    |> repo.update()
-  end
-
-  defp create_receive_ledger(_repo, %{verify_balances_step: {transfer_amount, _, receive_acc}}) do
-    %{
-      amount: transfer_amount,
-      account_id: receive_acc.id,
-      type: :transfer_receive
-    }
-    |> create_ledger()
-  end
-
-  defp add_to_receive_acc(repo, %{verify_balances_step: {verified_amount, _, receive_acc}}) do
-    receive_acc
-    |> Account.changeset(%{balance: receive_acc.balance + verified_amount})
-    |> repo.update()
+  def create_ledger(attrs \\ %{}) do
+    %Ledger{}
+    |> Ledger.changeset(attrs)
+    |> Repo.insert()
   end
 end
