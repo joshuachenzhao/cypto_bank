@@ -16,11 +16,13 @@ defmodule CyptoBankWeb.UserView do
 
   def render("user.json", %{user: user}) do
     %{
-      id: user.id,
-      email: user.email,
-      is_admin: user.is_admin,
-      inserted_at: user.inserted_at,
-      updated_at: user.updated_at
+      user: %{
+        id: user.id,
+        email: user.email,
+        is_admin: user.is_admin,
+        inserted_at: user.inserted_at,
+        updated_at: user.updated_at
+      }
     }
   end
 end

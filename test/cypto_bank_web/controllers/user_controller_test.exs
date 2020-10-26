@@ -2,23 +2,22 @@ defmodule CyptoBankWeb.UserControllerTest do
   use CyptoBankWeb.ConnCase
 
   alias CyptoBank.Accounts
-  alias CyptoBank.Accounts.User
   alias Plug.Test
 
-  @create_attrs %{
-    email: "some email",
+  @admin_create_attrs %{
+    email: "admin@email.com",
     is_admin: true,
     password: "some password"
   }
-  @update_attrs %{
-    email: "some updated email",
+  @create_attrs %{
+    email: "user@email.com",
     is_admin: false,
-    password: "some updated password"
+    password: "some password"
   }
   @invalid_attrs %{email: nil, is_admin: nil, password: nil}
   @current_user_attrs %{
     email: "some current user email",
-    is_admin: true,
+    is_admin: false,
     password: "some current user password"
   }
 
@@ -27,82 +26,78 @@ defmodule CyptoBankWeb.UserControllerTest do
     user
   end
 
+  def fixture(:admin) do
+    {:ok, admin} = Accounts.create_user(@admin_create_attrs)
+    admin
+  end
+
   def fixture(:current_user) do
     {:ok, current_user} = Accounts.create_user(@current_user_attrs)
     current_user
   end
 
   setup %{conn: conn} do
-    {:ok, conn: conn, current_user: current_user} = setup_current_user(conn)
+    {:ok, conn: conn, current_user: current_user} = setup_current_user_admin(conn)
     {:ok, conn: put_req_header(conn, "accept", "application/json"), current_user: current_user}
   end
 
   describe "index" do
-    test "lists all users", %{conn: conn, current_user: current_user} do
+    test "lists all users for admin/operation", %{conn: conn, current_user: current_user} do
       conn = get(conn, Routes.user_path(conn, :index))
 
       assert json_response(conn, 200)["data"] == [
                %{
-                 "id" => current_user.id,
-                 "email" => current_user.email,
-                 "is_admin" => current_user.is_admin
+                 "user" => %{
+                   "id" => current_user.id,
+                   "email" => current_user.email,
+                   "is_admin" => current_user.is_admin,
+                   "inserted_at" => current_user.inserted_at |> DateTime.to_iso8601(),
+                   "updated_at" => current_user.updated_at |> DateTime.to_iso8601()
+                 }
                }
              ]
     end
+
+    # test "lists all users for admin/operation return error if user does not have admin access", %{
+    #   conn: conn,
+    #   current_user: current_user
+    # } do
+    #   conn = get(conn, Routes.user_path(conn, :index))
+    #
+    #   assert json_response(conn, 422) == %{"errors" => %{"detail" => "no_admin_access"}}
+    # end
   end
 
   describe "create user" do
     test "renders user when data is valid", %{conn: conn} do
       conn = post(conn, Routes.user_path(conn, :create), user: @create_attrs)
-      assert %{"id" => id} = json_response(conn, 201)["data"]
+
+      assert %{
+               "user" => %{
+                 "id" => id,
+                 "email" => _email,
+                 "is_admin" => _is_admin,
+                 "inserted_at" => _inserted_at,
+                 "updated_at" => _updated_at
+               }
+             } = json_response(conn, 201)["data"]
 
       conn = get(conn, Routes.user_path(conn, :show, id))
 
       assert %{
-               "id" => _id,
-               "email" => "some email",
-               "is_admin" => false
+               "user" => %{
+                 "id" => _id,
+                 "email" => _email,
+                 "is_admin" => _is_admin,
+                 "inserted_at" => _inserted_at,
+                 "updated_at" => _updated_at
+               }
              } = json_response(conn, 200)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
       conn = post(conn, Routes.user_path(conn, :create), user: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
-    end
-  end
-
-  describe "update user" do
-    setup [:create_user]
-
-    test "renders user when data is valid", %{conn: conn, user: %User{id: id} = user} do
-      conn = put(conn, Routes.user_path(conn, :update, user), user: @update_attrs)
-      assert %{"id" => ^id} = json_response(conn, 200)["data"]
-
-      conn = get(conn, Routes.user_path(conn, :show, id))
-
-      assert %{
-               "id" => _id,
-               "email" => "some updated email",
-               "is_admin" => false
-             } = json_response(conn, 200)["data"]
-    end
-
-    test "renders errors when data is invalid", %{conn: conn, user: user} do
-      conn = put(conn, Routes.user_path(conn, :update, user), user: @invalid_attrs)
-      assert json_response(conn, 422)["errors"] != %{}
-    end
-  end
-
-  describe "delete user" do
-    setup [:create_user]
-
-    test "deletes chosen user", %{conn: conn, user: user} do
-      conn = delete(conn, Routes.user_path(conn, :delete, user))
-      assert response(conn, 204)
-
-      assert_error_sent 404, fn ->
-        get(conn, Routes.user_path(conn, :show, user))
-      end
     end
   end
 
@@ -113,14 +108,17 @@ defmodule CyptoBankWeb.UserControllerTest do
           conn,
           Routes.user_path(conn, :sign_in, %{
             email: current_user.email,
-            password: @current_user_attrs.password
+            password: current_user.password
           })
         )
 
       assert json_response(conn, 200)["data"] == %{
                "user" => %{
                  "id" => current_user.id,
-                 "email" => current_user.email
+                 "email" => current_user.email,
+                 "is_admin" => current_user.is_admin,
+                 "inserted_at" => current_user.inserted_at |> DateTime.to_iso8601(),
+                 "updated_at" => current_user.updated_at |> DateTime.to_iso8601()
                }
              }
     end
@@ -141,13 +139,16 @@ defmodule CyptoBankWeb.UserControllerTest do
     end
   end
 
-  defp create_user(_) do
-    user = fixture(:user)
-    %{user: user}
-  end
-
   def setup_current_user(conn) do
     current_user = fixture(:current_user)
+
+    {:ok,
+     conn: Test.init_test_session(conn, current_user_id: current_user.id),
+     current_user: current_user}
+  end
+
+  def setup_current_user_admin(conn) do
+    current_user = fixture(:admin)
 
     {:ok,
      conn: Test.init_test_session(conn, current_user_id: current_user.id),
