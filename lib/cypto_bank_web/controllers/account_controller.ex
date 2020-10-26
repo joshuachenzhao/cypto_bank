@@ -7,6 +7,9 @@ defmodule CyptoBankWeb.AccountController do
 
   action_fallback CyptoBankWeb.FallbackController
 
+  @doc """
+  List all accounts belongs to current user
+  """
   def index(conn, _params) do
     with {:ok, user} <- fetch_current_user(conn) do
       accounts = Accounts.list_accounts_for_user(user)
@@ -14,6 +17,9 @@ defmodule CyptoBankWeb.AccountController do
     end
   end
 
+  @doc """
+  Create an account for current user
+  """
   def create(conn, _attrs) do
     with {:ok, user_id} <- fetch_current_user_id(conn),
          {:ok, %Account{} = account} <- Accounts.create_account_for_user(user_id) do
@@ -24,6 +30,9 @@ defmodule CyptoBankWeb.AccountController do
     end
   end
 
+  @doc """
+  Show an account belongs to current user
+  """
   def show(conn, %{"account_id" => account_id}) do
     with {:ok, user} <- fetch_current_user(conn),
          {:ok, account} <- Accounts.fetch_account_for_user(user, account_id) do
