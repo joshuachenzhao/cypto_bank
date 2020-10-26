@@ -19,16 +19,6 @@ format.
   * Admin/operation user can approve adjustments if adjustments meet safety
     requirement
 
-## ERD
-  ![CyptoBank ERD](./cypto_bank_erd.png)
-
-## Run project
-  * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.setup`
-  * Start Phoenix endpoint with `mix phx.server` or with IEx `iex -S mix phx.server`
-
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
-
 ## CyptoBank RESTful API
   * Shared Postman API collections link: https://www.getpostman.com/collections/fbe6519933e168dffea0
   * Postman auto generated API docs: https://documenter.getpostman.com/view/3036697/TVYGbHQa
@@ -109,5 +99,15 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
     - CyptoBank.Helpers.Query is created for previous projects, and I do realize
       now it doesn't be used much, I will remove it, good code is the code that
       not in the project.
+
+## ERD
+  ![CyptoBank ERD](./cypto_bank_erd.png)
+
+## Run project
+  * Install dependencies with `mix deps.get`
+  * Create and migrate your database with `mix ecto.setup`
+  * Start Phoenix endpoint with `mix phx.server` or with IEx `iex -S mix phx.server`
+
+Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 
