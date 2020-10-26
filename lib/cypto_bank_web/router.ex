@@ -68,7 +68,7 @@ defmodule CyptoBankWeb.Router do
 
     scope "/" do
       pipe_through [:fetch_session, :protect_from_forgery]
-      live_dashboard "/dashboard", metrics: CyptoBankWeb.Telemetry
+      live_dashboard "/dashboard", metrics: CyptoBankWeb.Telemetry, ecto_repos: [CyptoBank.Repo]
     end
   end
 
