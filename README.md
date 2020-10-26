@@ -23,7 +23,7 @@ format.
   * Shared Postman API collections link: https://www.getpostman.com/collections/fbe6519933e168dffea0
   * Postman auto generated API docs: https://documenter.getpostman.com/view/3036697/TVYGbHQa
   * An export collections of API from Postman in JSON can also be found in
-    project root folder, name: CyptoBank routes.postman_collection.json
+    project root folder, name: cypto_bank.postman_collection.json
 
 ## Design, code and TODO
   * CyptoBank is created over the weekend with heart, as creator I fully intent

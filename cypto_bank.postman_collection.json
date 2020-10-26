@@ -1,12 +1,12 @@
 {
 	"info": {
-		"_postman_id": "1af4b135-99af-470b-86a5-17b14addd051",
-		"name": "CyptoBank routes",
+		"_postman_id": "c6d73345-d734-4e73-bbfd-264ea00ddea1",
+		"name": "CyptoBank",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "User authentication endpoints",
+			"name": "User authentication routes",
 			"item": [
 				{
 					"name": "create a user",
@@ -15,7 +15,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"user\": {\"email\": \"user11@email.com\", \"password\": \"qwerty\"}}",
+							"raw": "{\n    \"user\": {\n        \"email\": \"user_01@email.com\",\n        \"password\": \"password\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -23,39 +23,29 @@
 							}
 						},
 						"url": {
-							"raw": "{{server_url}}/api/users/sign_up",
+							"raw": "http://localhost:4000/api/users/sign_up",
+							"protocol": "http",
 							"host": [
-								"{{server_url}}"
+								"localhost"
 							],
+							"port": "4000",
 							"path": [
 								"api",
 								"users",
 								"sign_up"
-							],
-							"query": [
-								{
-									"key": "email",
-									"value": "user3@email.com",
-									"disabled": true
-								},
-								{
-									"key": "password",
-									"value": "qwerty",
-									"disabled": true
-								}
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "create admin user",
+					"name": "create an admin user",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"user\": {\"email\": \"admin@email.com\", \"password\": \"qwerty\", \"is_admin\": true}}",
+							"raw": "{\n    \"user\": {\n        \"email\": \"admin_01@email.com\",\n        \"password\": \"password\",\n        \"is_admin\": true\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -63,44 +53,33 @@
 							}
 						},
 						"url": {
-							"raw": "{{server_url}}/api/users/sign_up",
+							"raw": "http://localhost:4000/api/users/sign_up",
+							"protocol": "http",
 							"host": [
-								"{{server_url}}"
+								"localhost"
 							],
+							"port": "4000",
 							"path": [
 								"api",
 								"users",
 								"sign_up"
-							],
-							"query": [
-								{
-									"key": "email",
-									"value": "user3@email.com",
-									"disabled": true
-								},
-								{
-									"key": "password",
-									"value": "qwerty",
-									"disabled": true
-								}
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "sign in a client user",
+					"name": "sign in a user",
 					"request": {
-						"auth": {
-							"type": "noauth"
-						},
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{server_url}}/api/users/sign_in/?email=user11@email.com&password=qwerty",
+							"raw": "http://localhost:4000/api/users/sign_in/?email=user_01@email.com&password=password",
+							"protocol": "http",
 							"host": [
-								"{{server_url}}"
+								"localhost"
 							],
+							"port": "4000",
 							"path": [
 								"api",
 								"users",
@@ -110,11 +89,11 @@
 							"query": [
 								{
 									"key": "email",
-									"value": "user11@email.com"
+									"value": "user_01@email.com"
 								},
 								{
 									"key": "password",
-									"value": "qwerty"
+									"value": "password"
 								}
 							]
 						}
@@ -124,16 +103,15 @@
 				{
 					"name": "sign in a admin user",
 					"request": {
-						"auth": {
-							"type": "noauth"
-						},
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{server_url}}/api/users/sign_in?email=admin@email.com&password=qwerty",
+							"raw": "http://localhost:4000/api/users/sign_in?email=admin_01@email.com&password=password",
+							"protocol": "http",
 							"host": [
-								"{{server_url}}"
+								"localhost"
 							],
+							"port": "4000",
 							"path": [
 								"api",
 								"users",
@@ -142,11 +120,11 @@
 							"query": [
 								{
 									"key": "email",
-									"value": "admin@email.com"
+									"value": "admin_01@email.com"
 								},
 								{
 									"key": "password",
-									"value": "qwerty"
+									"value": "password"
 								}
 							]
 						}
@@ -157,7 +135,7 @@
 			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "Current user/account endpoints",
+			"name": "Current user/account routes",
 			"item": [
 				{
 					"name": "show current user",
@@ -165,10 +143,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{server_url}}/api/user",
+							"raw": "http://localhost:4000/api/user",
+							"protocol": "http",
 							"host": [
-								"{{server_url}}"
+								"localhost"
 							],
+							"port": "4000",
 							"path": [
 								"api",
 								"user"
@@ -183,10 +163,12 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{server_url}}/api/user/accounts",
+							"raw": "http://localhost:4000/api/user/accounts",
+							"protocol": "http",
 							"host": [
-								"{{server_url}}"
+								"localhost"
 							],
+							"port": "4000",
 							"path": [
 								"api",
 								"user",
@@ -202,10 +184,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{server_url}}/api/user/accounts",
+							"raw": "http://localhost:4000/api/user/accounts",
+							"protocol": "http",
 							"host": [
-								"{{server_url}}"
+								"localhost"
 							],
+							"port": "4000",
 							"path": [
 								"api",
 								"user",
@@ -221,15 +205,17 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{server_url}}/api/user/accounts/0c85a961-809a-4bab-976e-cebd8055f8c3",
+							"raw": "http://localhost:4000/api/user/accounts/fc18939a-db08-466f-ac73-b926cc78989b",
+							"protocol": "http",
 							"host": [
-								"{{server_url}}"
+								"localhost"
 							],
+							"port": "4000",
 							"path": [
 								"api",
 								"user",
 								"accounts",
-								"0c85a961-809a-4bab-976e-cebd8055f8c3"
+								"fc18939a-db08-466f-ac73-b926cc78989b"
 							]
 						}
 					},
@@ -239,7 +225,7 @@
 			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "Transaction endpoints",
+			"name": "Transaction routes",
 			"item": [
 				{
 					"name": "create a deposit for a account of user",
@@ -256,15 +242,17 @@
 							}
 						},
 						"url": {
-							"raw": "{{server_url}}/api/user/accounts/0c85a961-809a-4bab-976e-cebd8055f8c3/deposit",
+							"raw": "http://localhost:4000/api/user/accounts/fc18939a-db08-466f-ac73-b926cc78989b/deposit",
+							"protocol": "http",
 							"host": [
-								"{{server_url}}"
+								"localhost"
 							],
+							"port": "4000",
 							"path": [
 								"api",
 								"user",
 								"accounts",
-								"0c85a961-809a-4bab-976e-cebd8055f8c3",
+								"fc18939a-db08-466f-ac73-b926cc78989b",
 								"deposit"
 							]
 						}
@@ -278,7 +266,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"transaction\" :{\n        \"amount\": 1000\n    }\n}",
+							"raw": "{\n    \"transaction\": {\n        \"amount\": 1000\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -286,33 +274,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{server_url}}/api/user/accounts/0c85a961-809a-4bab-976e-cebd8055f8c3/withdrawal",
+							"raw": "http://localhost:4000/api/user/accounts/fc18939a-db08-466f-ac73-b926cc78989b/withdrawal",
+							"protocol": "http",
 							"host": [
-								"{{server_url}}"
+								"localhost"
 							],
+							"port": "4000",
 							"path": [
 								"api",
 								"user",
 								"accounts",
-								"0c85a961-809a-4bab-976e-cebd8055f8c3",
+								"fc18939a-db08-466f-ac73-b926cc78989b",
 								"withdrawal"
-							],
-							"query": [
-								{
-									"key": "account_id",
-									"value": "888d9f5b-96df-4e1f-b0e4-957902943501",
-									"disabled": true
-								},
-								{
-									"key": "amount",
-									"value": "1000",
-									"disabled": true
-								},
-								{
-									"key": "memo",
-									"value": null,
-									"disabled": true
-								}
 							]
 						}
 					},
@@ -325,7 +298,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"transaction\" :{\n        \"amount\": 40,\n        \"receive_account_id\": \"e2c7a164-2c7f-4655-b7dd-a9f024fca3eb\"\n    }\n}",
+							"raw": "{\n    \"transaction\": {\n        \"amount\": 40,\n        \"receive_account_id\": \"106f0c50-0eba-4221-a095-9baeb1aeb274\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -333,33 +306,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{server_url}}/api/user/accounts/0c85a961-809a-4bab-976e-cebd8055f8c3/transfer",
+							"raw": "http://localhost:4000/api/user/accounts/fc18939a-db08-466f-ac73-b926cc78989b/transfer",
+							"protocol": "http",
 							"host": [
-								"{{server_url}}"
+								"localhost"
 							],
+							"port": "4000",
 							"path": [
 								"api",
 								"user",
 								"accounts",
-								"0c85a961-809a-4bab-976e-cebd8055f8c3",
+								"fc18939a-db08-466f-ac73-b926cc78989b",
 								"transfer"
-							],
-							"query": [
-								{
-									"key": "account_id",
-									"value": "888d9f5b-96df-4e1f-b0e4-957902943501",
-									"disabled": true
-								},
-								{
-									"key": "amount",
-									"value": "1000",
-									"disabled": true
-								},
-								{
-									"key": "memo",
-									"value": null,
-									"disabled": true
-								}
 							]
 						}
 					},
@@ -371,15 +329,17 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{server_url}}/api/user/accounts/0c85a961-809a-4bab-976e-cebd8055f8c3/transactions",
+							"raw": "http://localhost:4000/api/user/accounts/fc18939a-db08-466f-ac73-b926cc78989b/transactions",
+							"protocol": "http",
 							"host": [
-								"{{server_url}}"
+								"localhost"
 							],
+							"port": "4000",
 							"path": [
 								"api",
 								"user",
 								"accounts",
-								"0c85a961-809a-4bab-976e-cebd8055f8c3",
+								"fc18939a-db08-466f-ac73-b926cc78989b",
 								"transactions"
 							]
 						}
@@ -392,17 +352,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{server_url}}/api/user/accounts/0c85a961-809a-4bab-976e-cebd8055f8c3/transactions/0e62c073-8764-4c53-ac6e-06f1ab6b1e2b",
+							"raw": "http://localhost:4000/api/user/accounts/fc18939a-db08-466f-ac73-b926cc78989b/transactions/9f39d07f-d8fc-4a5b-845c-a7bc6c7a3ba9",
+							"protocol": "http",
 							"host": [
-								"{{server_url}}"
+								"localhost"
 							],
+							"port": "4000",
 							"path": [
 								"api",
 								"user",
 								"accounts",
-								"0c85a961-809a-4bab-976e-cebd8055f8c3",
+								"fc18939a-db08-466f-ac73-b926cc78989b",
 								"transactions",
-								"0e62c073-8764-4c53-ac6e-06f1ab6b1e2b"
+								"9f39d07f-d8fc-4a5b-845c-a7bc6c7a3ba9"
 							]
 						}
 					},
@@ -412,7 +374,7 @@
 			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "Adjustment endpoints",
+			"name": "Adjustment routes",
 			"item": [
 				{
 					"name": "create an adjustment for an account of user",
@@ -421,7 +383,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"adjustment\" :{\n        \"original_ledger_id\": \"85159137-5ae1-4566-a5b9-f5a16c67fd36\",\n        \"amount\": 2000,\n        \"memo\": \"yolo\"\n    }\n}",
+							"raw": "{\n    \"adjustment\": {\n        \"original_ledger_id\": \"158f7eff-222c-4e13-87de-31ca730435ec\",\n        \"amount\": 3000\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -429,15 +391,17 @@
 							}
 						},
 						"url": {
-							"raw": "{{server_url}}/api/user/accounts/0c85a961-809a-4bab-976e-cebd8055f8c3/adjustments",
+							"raw": "http://localhost:4000/api/user/accounts/fc18939a-db08-466f-ac73-b926cc78989b/adjustments",
+							"protocol": "http",
 							"host": [
-								"{{server_url}}"
+								"localhost"
 							],
+							"port": "4000",
 							"path": [
 								"api",
 								"user",
 								"accounts",
-								"0c85a961-809a-4bab-976e-cebd8055f8c3",
+								"fc18939a-db08-466f-ac73-b926cc78989b",
 								"adjustments"
 							]
 						}
@@ -448,7 +412,7 @@
 			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "Admin/Operation endpoints",
+			"name": "Admin/Operation routes",
 			"item": [
 				{
 					"name": "index all users for admin",
@@ -456,10 +420,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{server_url}}/api/admin/users",
+							"raw": "http://localhost:4000/api/admin/users",
+							"protocol": "http",
 							"host": [
-								"{{server_url}}"
+								"localhost"
 							],
+							"port": "4000",
 							"path": [
 								"api",
 								"admin",
@@ -475,15 +441,17 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{server_url}}/api/admin/users/35960fa8-e1f8-4b42-8a2d-a09cc57efe30",
+							"raw": "http://localhost:4000/api/admin/users/00517b4d-27a8-43a8-b43e-66c42d5a65e1",
+							"protocol": "http",
 							"host": [
-								"{{server_url}}"
+								"localhost"
 							],
+							"port": "4000",
 							"path": [
 								"api",
 								"admin",
 								"users",
-								"35960fa8-e1f8-4b42-8a2d-a09cc57efe30"
+								"00517b4d-27a8-43a8-b43e-66c42d5a65e1"
 							]
 						}
 					},
@@ -495,10 +463,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{server_url}}/api/admin/transactions",
+							"raw": "http://localhost:4000/api/admin/transactions",
+							"protocol": "http",
 							"host": [
-								"{{server_url}}"
+								"localhost"
 							],
+							"port": "4000",
 							"path": [
 								"api",
 								"admin",
@@ -514,10 +484,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{server_url}}/api/admin/adjustments",
+							"raw": "http://localhost:4000/api/admin/adjustments",
+							"protocol": "http",
 							"host": [
-								"{{server_url}}"
+								"localhost"
 							],
+							"port": "4000",
 							"path": [
 								"api",
 								"admin",
@@ -533,15 +505,17 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{server_url}}/api/admin/adjustments/629221ba-dbcd-43f3-8c45-1949de94afe6",
+							"raw": "http://localhost:4000/api/admin/adjustments/8d954f04-48dd-434a-a7e1-3ca6eca8ddcf",
+							"protocol": "http",
 							"host": [
-								"{{server_url}}"
+								"localhost"
 							],
+							"port": "4000",
 							"path": [
 								"api",
 								"admin",
 								"adjustments",
-								"629221ba-dbcd-43f3-8c45-1949de94afe6"
+								"8d954f04-48dd-434a-a7e1-3ca6eca8ddcf"
 							]
 						}
 					},
@@ -554,7 +528,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"adjustment\" :{\n        \"original_ledger_id\": \"7f4d7c1c-61b5-4e86-ae60-865d1afc5d4a\",\n        \"amount\": -2000,\n        \"memo\": \"yolo\"\n    }\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -562,15 +536,17 @@
 							}
 						},
 						"url": {
-							"raw": "{{server_url}}/api/admin/adjustments/629221ba-dbcd-43f3-8c45-1949de94afe6",
+							"raw": "http://localhost:4000/api/admin/adjustments/8d954f04-48dd-434a-a7e1-3ca6eca8ddcf",
+							"protocol": "http",
 							"host": [
-								"{{server_url}}"
+								"localhost"
 							],
+							"port": "4000",
 							"path": [
 								"api",
 								"admin",
 								"adjustments",
-								"629221ba-dbcd-43f3-8c45-1949de94afe6"
+								"8d954f04-48dd-434a-a7e1-3ca6eca8ddcf"
 							]
 						}
 					},
@@ -578,6 +554,33 @@
 				}
 			],
 			"protocolProfileBehavior": {}
+		}
+	],
+	"variable": [
+		{
+			"id": "623770ce-6c6b-4acf-b5e3-2062b0263cb4",
+			"key": "server_url",
+			"value": "http://localhost:4000"
+		},
+		{
+			"id": "01f413da-01b3-4dca-9349-2e8422b70f7b",
+			"key": "user_id",
+			"value": ""
+		},
+		{
+			"id": "b156487f-b9b5-4ac3-8fbe-a6021422aa4d",
+			"key": "account_id",
+			"value": ""
+		},
+		{
+			"id": "8404230d-c98a-4ca4-896c-17044a0c1e24",
+			"key": "transaction_id",
+			"value": ""
+		},
+		{
+			"id": "7ddb3667-705e-4d2e-ab70-d991ec7f60c0",
+			"key": "adjustment_id",
+			"value": ""
 		}
 	],
 	"protocolProfileBehavior": {}
