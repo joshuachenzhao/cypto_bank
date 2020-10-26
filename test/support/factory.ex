@@ -8,15 +8,23 @@ defmodule CyptoBank.Factory do
 
   def user_factory do
     %User{
-      email: sequence(:email, &"b-email-#{&1}@example.com"),
+      email: sequence(:email, &"test-email-#{&1}@example.com"),
       is_admin: false,
       password: "some password"
     }
   end
 
+  def user_no_password(user) do
+    %{user | password: nil}
+  end
+
+  def make_admin(user) do
+    %{user | is_admin: true}
+  end
+
   def admin_factory do
     %User{
-      email: sequence(:email, &"a-email-#{&1}@example.com"),
+      email: sequence(:email, &"admin-email-#{&1}@example.com"),
       is_admin: true,
       password: "some password"
     }
@@ -24,21 +32,7 @@ defmodule CyptoBank.Factory do
 
   def account_factory do
     %Account{
-      balance: 10_000,
-      user: build(:user)
-    }
-  end
-
-  def send_account_factory do
-    %Account{
-      balance: 30_000,
-      user: build(:user)
-    }
-  end
-
-  def receive_account_factory do
-    %Account{
-      balance: 10_000,
+      balance: 100_000,
       user: build(:user)
     }
   end
@@ -47,7 +41,6 @@ defmodule CyptoBank.Factory do
     %Ledger{
       amount: 10_000,
       memo: "some memo",
-      type: :deposit,
       account: build(:account)
     }
   end
@@ -108,13 +101,16 @@ defmodule CyptoBank.Factory do
 
   def adjustment_factory do
     %Adjustment{
-      amount: 1_000,
-      user: build(:user),
+      amount: 10_000,
+      admin: build(:admin),
       memo: "some memo",
       status: :pending,
-      original_ledger: build(:deposit_ledger),
-      adjust_ledger: nil,
-      admin_id: nil
+      original_ledger: build(:ledger),
+      adjust_ledger: nil
     }
+  end
+
+  def get_fields(maps, field) do
+    maps |> Enum.map(&Map.get(&1, field))
   end
 end
