@@ -7,7 +7,7 @@ defmodule CyptoBank.TransactionsTest do
   alias CyptoBank.Repo
 
   describe "ledgers" do
-    alias CyptoBank.Accounts.{Account, User}
+    alias CyptoBank.Accounts.Account
     alias CyptoBank.Transactions
     alias CyptoBank.Transactions.Ledger
 
