@@ -60,7 +60,7 @@ defmodule CyptoBank.Seeds.Seed do
          {:ok, %Adjustment{} = with_adj} <-
            Adjustments.create_adjustment(%{
              "original_ledger_id" => with_tran_2.id,
-             "amount" => Enum.random(1..20000) * 100
+             "amount" => -Enum.random(1..20000) * 100
            }) do
       {:ok, "Successfully added a pair of clients with transactions and adjustments"}
     end
