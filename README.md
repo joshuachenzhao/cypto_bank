@@ -19,6 +19,9 @@ format.
   * Admin/operation user can approve adjustments if adjustments meet safety
     requirement
 
+## ERD
+  ![CyptoBank ERD](./cypto_bank_erd.png)
+
 ## Design, code and TODO
   * CyptoBank is created over the weekend with heart, as creator I fully intent
     to make the project as good as possible, however, two days are relative
