@@ -31,7 +31,7 @@ defmodule CyptoBank.Accounts.User do
     |> cast(attrs, @required_attrs)
     |> validate_required(@required_attrs)
     |> put_password_hash
-    |> unique_constraint(:email)
+    |> unique_constraint(:email, message: "There is already a user with this email")
   end
 
   defp put_password_hash(

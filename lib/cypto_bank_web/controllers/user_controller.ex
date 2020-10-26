@@ -51,14 +51,6 @@ defmodule CyptoBankWeb.UserController do
     end
   end
 
-  def update(conn, %{"id" => id, "user" => user_params}) do
-    user = Accounts.get_user!(id)
-
-    with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
-      render(conn, "show.json", user: user)
-    end
-  end
-
   @doc """
   Sign in a user, with session renew, in this code challenge user authentication uses
   session based strategy for the sake of simplicity, for more time, JWT/OAuth or other

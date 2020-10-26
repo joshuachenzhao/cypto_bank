@@ -61,12 +61,6 @@ defmodule CyptoBank.Accounts do
     |> Repo.insert()
   end
 
-  def update_user(%User{} = user, attrs) do
-    user
-    |> User.changeset(attrs)
-    |> Repo.update()
-  end
-
   def authenticate_user(email, password) do
     query = from(u in User, where: u.email == ^email)
     query |> Repo.one() |> verify_password(password)
