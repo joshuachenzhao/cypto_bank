@@ -30,8 +30,8 @@ format.
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 ## CyptoBank RESTful API
-  * Shared Postman API collections link: https://www.getpostman.com/collections/f962e58738f2008c0158
-  * Postman auto generated API docs: https://documenter.getpostman.com/view/3036697/TVYF8e8N
+  * Shared Postman API collections link: https://www.getpostman.com/collections/fbe6519933e168dffea0
+  * Postman auto generated API docs: https://documenter.getpostman.com/view/3036697/TVYGbHQa
   * An export collections of API from Postman in JSON can also be found in
     project root folder, name: CyptoBank routes.postman_collection.json
 
@@ -43,7 +43,9 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
     includes but not limits to:
     - most of time has been spend on achieving a robust banking system and
       features that required, unfortunately I don't have enough time left to
-      write more tests, increase CyptoBank test coverage is my current task.
+      write more tests, currently all business logics are test covered, the only
+      part that hasn't completed is controller, increase CyptoBank test coverage
+      is my current task.
     - currently, user authentication is session based, with simple but secure user
       authentication method, using email and hashed password, with session
       renew. If with more time, I would prefer implement token based
