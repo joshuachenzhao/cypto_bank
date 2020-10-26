@@ -22,6 +22,19 @@ format.
 ## ERD
   ![CyptoBank ERD](./cypto_bank_erd.png)
 
+## Run project
+  * Install dependencies with `mix deps.get`
+  * Create and migrate your database with `mix ecto.setup`
+  * Start Phoenix endpoint with `mix phx.server` or with IEx `iex -S mix phx.server`
+
+Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+
+## CyptoBank RESTful API
+  * Shared Postman API collections link: https://www.getpostman.com/collections/f962e58738f2008c0158
+  * Postman auto generated API docs: https://documenter.getpostman.com/view/3036697/TVYF8e8N
+  * An export collections of API from Postman in JSON can also be found in
+    project root folder, name: CyptoBank routes.postman_collection.json
+
 ## Design, code and TODO
   * CyptoBank is created over the weekend with heart, as creator I fully intent
     to make the project as good as possible, however, two days are relative
@@ -98,15 +111,3 @@ format.
       not in the project.
 
 
-## Run project
-  * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.setup`
-  * Start Phoenix endpoint with `mix phx.server` or with IEx `iex -S mix phx.server`
-
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
-
-## CyptoBank RESTful API
-  * Shared Postman API collections link: https://www.getpostman.com/collections/f962e58738f2008c0158
-  * Postman auto generated API docs: https://documenter.getpostman.com/view/3036697/TVYF8e8N
-  * An export collections of API from Postman in JSON can also be found in
-    project root folder, name: CyptoBank routes.postman_collection.json
