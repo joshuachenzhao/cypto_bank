@@ -1,4 +1,7 @@
 defmodule CyptoBank.Transactions.MultiSteps.DepositWithdrawal do
+  @moduledoc """
+  Ecto.Multi steps for CyptoBank.Transactions.deposit/2 and CyptoBank.Transactions.withdrawal/2
+  """
   import Ecto.Query, warn: false
 
   alias CyptoBank.Accounts.Account

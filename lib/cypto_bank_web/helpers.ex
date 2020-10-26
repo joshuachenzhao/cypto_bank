@@ -1,7 +1,7 @@
 defmodule CyptoBankWeb.Helpers do
   @moduledoc """
   Helper module for user/account permission roles handling
-  TODO this should moved to a plug
+  NOTE this should moved to a plug
   """
   import Plug.Conn
 

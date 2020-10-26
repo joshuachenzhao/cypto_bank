@@ -1,4 +1,7 @@
 defmodule CyptoBank.Transactions.MultiSteps.Transfer do
+  @moduledoc """
+  Ecto.Multi steps for CyptoBank.Transactions.transfer/3
+  """
   import Ecto.Query, warn: false
 
   alias CyptoBank.Accounts.Account

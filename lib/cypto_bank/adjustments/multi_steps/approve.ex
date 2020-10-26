@@ -1,4 +1,7 @@
 defmodule CyptoBank.Adjustments.MultiSteps.Approve do
+  @moduledoc """
+  Ecto.Multi steps for CyptoBank.Adjustments.approve_adjustment/2
+  """
   import Ecto.Query, warn: false
 
   alias CyptoBank.Accounts.Account
